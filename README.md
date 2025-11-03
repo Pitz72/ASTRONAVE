@@ -1,18 +1,17 @@
+# IL RELITTO SILENTE
 
-# Il Cavaliere e il Drago
+Un'avventura testuale (interactive fiction) di fantascienza con parser di comandi, ispirata ai classici giochi a riga di comando dei primi anni '80. L'intera esperienza è progettata per emulare l'estetica di un monitor a fosfori verdi di un vecchio terminale.
 
-Un'avventura testuale (interactive fiction) con parser di comandi, ispirata ai classici giochi a riga di comando dei primi anni '80. L'intera esperienza è progettata per emulare l'estetica di un monitor a fosfori verdi di un vecchio terminale.
-
-Il gioco è alimentato da un Dungeon Master basato su AI (Google Gemini) che interpreta i comandi del giocatore e genera dinamicamente la narrazione, gestendo lo stato del mondo e dell'inventario.
+Il gioco è alimentato da un Game Master basato su AI (Google Gemini) che interpreta i comandi del giocatore e genera dinamicamente la narrazione, gestendo lo stato del mondo e dell'inventario.
 
 ## Trama
 
-Un coraggioso cavaliere si addentra in una grotta misteriosa per affrontare un antico e avido drago che terrorizza i villaggi vicini. Riuscirai a navigare nelle oscure caverne, risolvere gli enigmi e sconfiggere la bestia?
+Un mistero fantascientifico. Sei il solitario pilota di una nave da carico che si imbatte in un'antica e silenziosa nave stellare aliena. Abbandonata? O c'è qualcosa in agguato nel buio? Dovrai usare il tuo ingegno per esplorare il relitto e scoprirne i segreti.
 
 ## Caratteristiche
 
 - **Estetica Retrò**: Interfaccia che simula un monitor a fosfori verdi, completa di scanlines e font pixelato.
-- **Dungeon Master AI**: La narrazione è gestita dal modello Gemini di Google, che offre risposte dinamiche e creative.
+- **Game Master AI**: La narrazione è gestita dal modello Gemini di Google, che offre risposte dinamiche e creative.
 - **Parser di Comandi Testuale**: Interagisci con il mondo usando comandi in linguaggio naturale (in italiano).
 - **Effetti Sonori 8-bit**: Suoni generati proceduralmente per tasti, azioni ed eventi, per aumentare l'immersione.
 - **Salvataggio e Caricamento**: Possibilità di salvare e caricare la partita in qualsiasi momento.
@@ -23,9 +22,10 @@ Apri l'applicazione e premi `RETURN` per iniziare. Inserisci i comandi nel promp
 
 **Comandi di Esempio:**
 - `guarda` / `esamina la stanza`: Per ottenere una descrizione del luogo in cui ti trovi.
-- `vai a nord` / `entra nella caverna`: Per spostarti tra le diverse aree.
-- `prendi la torcia`: Per raccogliere un oggetto.
-- `usa la spada sul drago`: Per usare un oggetto.
+- `analizza il relitto`: Per ottenere informazioni aggiuntive su un oggetto.
+- `vai a ovest` / `entra nella stiva`: Per spostarti tra le diverse aree.
+- `prendi la tuta spaziale`: Per raccogliere un oggetto.
+- `indossa la tuta`: Per usare un oggetto su te stesso.
 - `inventario` / `i`: Per controllare gli oggetti che possiedi.
 - `salva`: Per salvare lo stato attuale del gioco.
 - `carica`: Per caricare l'ultima partita salvata.

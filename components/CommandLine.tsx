@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { playKeystrokeSound } from '../services/audioService';
 
@@ -93,7 +94,7 @@ const CommandLine: React.FC<CommandLineProps> = ({ onSubmit, isLoading, history,
                     </div>
                 ) : (
                     <>
-                        <span className="text-green-400">{command}</span>
+                        <span className="text-green-400" style={{ whiteSpace: 'pre' }}>{command}</span>
                         <div
                             className="bg-green-400 animate-blink"
                             style={{ width: '1ch', height: '1.1em' }}

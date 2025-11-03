@@ -23,12 +23,12 @@ const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   
   // Game state managed by AI
-  const currentLocation = useRef<string>('Ingresso della Grotta');
+  const currentLocation = useRef<string>('Plancia della Santa Maria');
   const inventory = useRef<string[]>([]);
 
   const startGame = useCallback(() => {
     setOutput([]);
-    currentLocation.current = 'Ingresso della Grotta';
+    currentLocation.current = 'Plancia della Santa Maria';
     inventory.current = [];
     setGameState(GameState.Playing);
     setIsLoading(true);

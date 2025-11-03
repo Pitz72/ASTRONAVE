@@ -1,17 +1,16 @@
-
 import React from 'react';
 
 const StartScreen: React.FC = () => {
     return (
         <div className="w-full h-full flex flex-col items-center justify-center text-center p-4">
             <h1 className="text-4xl sm:text-5xl md:text-6xl mb-4 animate-blink text-green-300">
-                Il Cavaliere e il Drago
+                IL RELITTO SILENTE
             </h1>
             <p className="mb-2 text-green-500">di Simone Pizzi</p>
             <p className="mb-8 text-green-500">Anno: 1980+45</p>
             <p className="max-w-xl mb-4 text-green-400 leading-relaxed text-sm">
-                Un'avventura testuale dalla profonda e oscura era dei computer a 8 bit.
-                Usa comandi come 'guarda', 'vai a nord', 'prendi la torcia' per interagire con il mondo.
+                Un'avventura testuale dalle profondità oscure dello spazio.
+                Usa comandi come 'guarda', 'vai a ovest', 'prendi la tuta', 'analizza il relitto' per interagire con il mondo.
             </p>
             <p className="max-w-xl mb-8 text-green-400 leading-relaxed text-sm">
                 Usa 'salva' per salvare e 'carica' per caricare la partita.
