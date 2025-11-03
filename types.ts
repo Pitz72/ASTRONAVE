@@ -1,6 +1,8 @@
 
 export enum GameState {
-    Start,
+    StartMenu,
+    Instructions,
+    Intro,
     Playing,
     GameOver,
 }

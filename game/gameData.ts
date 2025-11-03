@@ -39,7 +39,7 @@ const activateCrystalCommand: Command = {
         state.flags.isCrystalAwake = true;
 
         return {
-            description: "Con una certa esitazione, attivi il dispositivo medico. La sua punta di cristallo emette un ronzio quasi inudibile e una debole luce ambrata. Avvicini la punta al cristallo opaco che tieni nell'altra mano.\nNon appena si toccano, il cristallo dati reagisce. La sua superficie lattiginosa diventa trasparente, rivelando al suo interno una complessa matrice di filamenti luminosi che pulsano in sincrono, come un cuore che ha ripreso a battere. Ora è tiepido e vibra debolmente. Sembra... in attesa. Sembra fatto per essere inserito in qualcosa.",
+            description: "Con una certa esitazione, attivi il dispositivo medico. La sua punta di cristallo emette un ronzio quasi inudibile e una debole luce ambrata. Avvicini la punta al cristallo opaco che tieni nell'altra mano.[PAUSE]Non appena si toccano, il cristallo dati reagisce. La sua superficie lattiginosa diventa trasparente, rivelando al suo interno una complessa matrice di filamenti luminosi che pulsano in sincrono, come un cuore che ha ripreso a battere. Ora è tiepido e vibra debolmente. Sembra... in attesa. Sembra fatto per essere inserito in qualcosa.",
             eventType: 'magic'
         };
     }
@@ -344,7 +344,7 @@ export const gameData: { [key: string]: Room } = {
                 state.flags.translationMatrixStarted = true;
                 state.flags.translationProgress = 4;
                 return {
-                    description: "Inserisci la lastra in un alloggiamento del tuo multiscanner. Lo strumento emette un ronzio e i suoi processori iniziano a lavorare febbrilmente.\nI dati sono una registrazione audio-mnemonica. Il linguaggio è incomprensibile, ma lo scanner sta iniziando a costruire una matrice di traduzione.\nStato traduzione: 4%\nUna voce metallica e distorta emette dal tuo scanner una traduzione frammentaria:\n...giorno del Grande Salto... (parola intraducibile: 'canto-radice')... le tre lune danzano fredde. Il Viaggio è la nostra (parola intraducibile: 'dovere-gioia')... presto vedremo nuove stelle...",
+                    description: "Inserisci la lastra in un alloggiamento del tuo multiscanner. Lo strumento emette un ronzio e i suoi processori iniziano a lavorare febbrilmente.[PAUSE]I dati sono una registrazione audio-mnemonica. Il linguaggio è incomprensibile, ma lo scanner sta iniziando a costruire una matrice di traduzione.\nStato traduzione: 4%\nUna voce metallica e distorta emette dal tuo scanner una traduzione frammentaria:\n...giorno del Grande Salto... (parola intraducibile: 'canto-radice')... le tre lune danzano fredde. Il Viaggio è la nostra (parola intraducibile: 'dovere-gioia')... presto vedremo nuove stelle...",
                     eventType: 'magic'
                 };
             }},
@@ -383,7 +383,7 @@ export const gameData: { [key: string]: Room } = {
                 }
                 state.flags.isWestDoorUnlocked = true;
                 return {
-                    description: "Ricordando la mappa stellare, la culla a tre soli dei costruttori della nave, capisci. Non è una serratura, è una domanda. E tu hai la risposta.\nAppoggi la mano sul simbolo e, invece di spingere, attivi tre delle sue punte luminose in sequenza.\nPer un istante, non accade nulla. Poi, un profondo e risonante 'gong' vibra attraverso la struttura della nave. Il simbolo a stella brilla di una luce bianca e accecante.\nLentamente, la grande porta a Ovest si dissolve in particelle di luce, rivelando l'ingresso a una stanza avvolta in un'oscurità totale.",
+                    description: "Ricordando la mappa stellare, la culla a tre soli dei costruttori della nave, capisci. Non è una serratura, è una domanda. E tu hai la risposta.[PAUSE]Appoggi la mano sul simbolo e, invece di spingere, attivi tre delle sue punte luminose in sequenza.[PAUSE]Per un istante, non accade nulla. Poi, un profondo e risonante 'gong' vibra attraverso la struttura della nave. Il simbolo a stella brilla di una luce bianca e accecante.[PAUSE]Lentamente, la grande porta a Ovest si dissolve in particelle di luce, rivelando l'ingresso a una stanza avvolta in un'oscurità totale.",
                     eventType: 'magic'
                 };
             }},
@@ -489,7 +489,7 @@ export const gameData: { [key: string]: Room } = {
                 state.flags.translationProgress = 42;
 
                 return {
-                    description: "Ti avvicini alla complessa struttura metallica che fluttua al centro della sala. Noti un piccolo incavo alla sua base, perfettamente sagomato per accogliere il cristallo pulsante. Lo inserisci.\nScatta in posizione con un 'click' quasi organico.\nImmediatamente, un'ondata di energia silenziosa attraversa la stanza. Le postazioni di controllo si illuminano debolmente. La struttura centrale si anima, i suoi anelli iniziano a ruotare lentamente. Un fascio di luce si proietta verso la cupola nera, che ora non è più buia, ma mostra una mappa stellare tridimensionale di una porzione sconosciuta della galassia.\nAl centro della mappa, appare l'immagine tremolante di una delle creature aliene, identica a quella che hai visto negli alloggi. Il suo volto è sereno, saggio. La figura alza una mano e indica un punto preciso della mappa: un piccolo, insignificante sistema solare giallo in una zona remota. Il tuo sistema solare.\nNel frattempo, il tuo scanner emette un segnale. Ha intercettato un'enorme quantità di dati dalla proiezione.\nStato traduzione: 42%",
+                    description: "Ti avvicini alla complessa struttura metallica che fluttua al centro della sala. Noti un piccolo incavo alla sua base, perfettamente sagomato per accogliere il cristallo pulsante. Lo inserisci.[PAUSE]Scatta in posizione con un 'click' quasi organico.[PAUSE]Immediatamente, un'ondata di energia silenziosa attraversa la stanza. Le postazioni di controllo si illuminano debolmente. La struttura centrale si anima, i suoi anelli iniziano a ruotare lentamente. Un fascio di luce si proietta verso la cupola nera, che ora non è più buia, ma mostra una mappa stellare tridimensionale di una porzione sconosciuta della galassia.[PAUSE]Al centro della mappa, appare l'immagine tremolante di una delle creature aliene, identica a quella che hai visto negli alloggi. Il suo volto è sereno, saggio. La figura alza una mano e indica un punto preciso della mappa: un piccolo, insignificante sistema solare giallo in una zona remota. Il tuo sistema solare.[PAUSE]Nel frattempo, il tuo scanner emette un segnale. Ha intercettato un'enorme quantità di dati dalla proiezione.\nStato traduzione: 42%",
                     eventType: 'magic'
                 };
             }},
@@ -558,7 +558,7 @@ export const gameData: { [key: string]: Room } = {
                 }
                 state.flags.translationProgress = 18;
                 state.flags.cilindroAnalizzato = true;
-                return { description: "Inserisci il cilindro nello scanner. È un'altra registrazione. La tua matrice di traduzione si aggiorna.\nStato traduzione: 18%\nLa voce tradotta è più chiara, più personale:\n...il legame-collettivo si affievolisce. I cicli sono quasi compiuti. Il 'Grande Salto' è stato un successo, ma il nostro tempo finisce. Lasciamo questa eco... questo (parola intraducibile: 'seme-dell-anima')... perché chi verrà dopo possa conoscere il motivo. Non la fine, ma la continuazione...", eventType: 'magic' };
+                return { description: "Inserisci il cilindro nello scanner. È un'altra registrazione. La tua matrice di traduzione si aggiorna.[PAUSE]Stato traduzione: 18%\nLa voce tradotta è più chiara, più personale:\n...il legame-collettivo si affievolisce. I cicli sono quasi compiuti. Il 'Grande Salto' è stato un successo, ma il nostro tempo finisce. Lasciamo questa eco... questo (parola intraducibile: 'seme-dell-anima')... perché chi verrà dopo possa conoscere il motivo. Non la fine, ma la continuazione...", eventType: 'magic' };
             }},
             { regex: "^(analizza) (dispositivo|dispositivo medico|strumento)$", handler: (state) => {
                 if (!state.inventory.includes("Dispositivo Medico Alieno")) {
@@ -575,9 +575,29 @@ export const gameData: { [key: string]: Room } = {
             { regex: "^(parla|parla con anziano|parla con ologramma)$", handler: (state) => {
                 state.flags.hasHeardMonologue = true;
                 return {
-                    description: "(La figura non muove le labbra, ma le parole risuonano direttamente nella tua mente, tradotte istantaneamente dal tuo scanner potenziato)\n\n\"Creatura di carbonio... Figlio delle Stelle... Benvenuto. Non temere. Io non sono qui. Questa non è una trasmissione, ma un ricordo. L'ultimo monumento della nostra esistenza.\"\n\n\"Comprendo la tua curiosità. Hai viaggiato lontano per arrivare qui, proprio come facemmo noi. Il nostro tempo stava finendo. Il nostro universo si stava spegnendo. Ma la vita... la vita è troppo preziosa per svanire con esso.\"\n\n\"Così intraprendemmo il 'Grande Salto', un ultimo, disperato atto di creazione. Abbiamo attraversato il buio tra le galassie non per conquistare, ma per seminare. Abbiamo codificato il potenziale della vita, il nostro stesso schema, e lo abbiamo donato alle stelle nascenti, ai mondi giovani... come il tuo.\"\n\n\"Noi siamo i vostri antenati. Ma non siamo i vostri dèi. Siamo solo un ricordo. La nostra storia finisce qui... perché la vostra potesse iniziare.\"\n\n(L'ologramma fa un cenno del capo, un gesto di infinito rispetto)\n\n\"Il nostro dovere è compiuto. Ora va', e vivi. Questo è tutto ciò che abbiamo sempre desiderato.\"",
+                    description: "(La figura non muove le labbra, ma le parole risuonano direttamente nella tua mente, tradotte istantaneamente dal tuo scanner potenziato)\n\n\"Creatura di carbonio... Figlio delle Stelle... Benvenuto. Non temere. Io non sono qui. Questa non è una trasmissione, ma un ricordo. L'ultimo monumento della nostra esistenza.\"\n\n\"Comprendo la tua curiosità. Hai viaggiato lontano per arrivare qui, proprio come facemmo noi. Il nostro tempo stava finendo. Il nostro universo si stava spegnendo. Ma la vita... la vita è troppo preziosa per svanire con esso.\"\n[PAUSE]\n\"Così intraprendemmo il 'Grande Salto', un ultimo, disperato atto di creazione. Abbiamo attraversato il buio tra le galassie non per conquistare, ma per seminare. Abbiamo codificato il potenziale della vita, il nostro stesso schema, e lo abbiamo donato alle stelle nascenti, ai mondi giovani... come il tuo.\"\n\n\"Noi siamo i vostri antenati. Ma non siamo i vostri dèi. Siamo solo un ricordo. La nostra storia finisce qui... perché la vostra potesse iniziare.\"\n[PAUSE]\n(L'ologramma fa un cenno del capo, un gesto di infinito rispetto)\n\n\"Il nostro dovere è compiuto. Ora va', e vivi. Questo è tutto ciò che abbiamo sempre desiderato.\"",
                     eventType: 'magic',
-                    gameOver: "La figura di luce si dissolve, e con essa la stanza. Per un istante, sei sospeso nel vuoto, nel silenzio assoluto. Poi, un battito di ciglia, e sei di nuovo sulla plancia della Santa Maria. Tutto è come l'hai lasciato. L'allarme di prossimità è spento. Fuori dall'oblò, il relitto alieno è svanito, come se non fosse mai esistito. Sei solo, di nuovo. Ma non del tutto. Sul pannello di controllo, dove prima c'era una luce rossa lampeggiante, ora c'è un piccolo oggetto, simile a un seme fossilizzato, che pulsa di una debole e calda luce. Un ricordo. Una promessa."
+                    gameOver: `Ti risvegli di soprassalto.
+[PAUSE]
+Non sei più nel buio del Santuario. Sei sulla plancia della Santa Maria, seduto sulla tua poltrona di comando. L'aria odora di ozono riciclato e caffè stantio. Familiarità.
+
+Non ricordi come sei tornato. È stato un sogno? Un'allucinazione indotta dall'isolamento?
+[PAUSE]
+Guardi fuori dall'oblò principale. Il Relitto Silente è scomparso. Lo spazio è vuoto, nero e indifferente, come se non fosse mai stato lì. I tuoi sensori non mostrano alcuna traccia.
+
+Stai quasi per convincerti di aver immaginato tutto, quando un 'bip' sommesso attira la tua attenzione.
+[PAUSE]
+Sul pannello di controllo, dove prima non c'era nulla, c'è un piccolo oggetto. Un seme fossilizzato. Ma ora non è più inerte. Al suo interno, una debole luce verde pulsa lentamente, come un cuore addormentato in attesa della primavera.
+[PAUSE]
+La ricchezza che cercavi... non l'hai trovata. Ma hai trovato qualcos'altro.
+
+Un'eredità. Un segreto. Una responsabilità.
+
+La rotta per la colonia di Europa è ancora lì, che ti aspetta. Ma ora, il carico più prezioso che trasporti non è nelle casse nella stiva.
+
+È qui, con te, sulla plancia.
+
+<span class="text-yellow-300 text-2xl mt-4 block text-center">FINE</span>`
                 };
             }},
             { regex: "^(esamina|guarda) (anziano|ologramma|figura)$", handler: (state) => {
