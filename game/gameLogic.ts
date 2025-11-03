@@ -69,8 +69,8 @@ export const processCommand = (command: string, currentState: PlayerState): { re
     const currentRoomData = gameData[newState.location];
     if (!currentRoomData) {
         // Fallback per stanze non ancora implementate
-        if (newState.location === "Stanza 4 WIP") {
-             response = { description: "Questa parte del gioco non è ancora stata creata.", eventType: 'error' };
+        if (newState.location === "Stanza 5 WIP") {
+             response = { description: "Il corridoio prosegue nell'oscurità. Questa parte del gioco non è ancora stata creata.", eventType: 'error' };
         } else {
              response = { description: "ERRORE CRITICO: La stanza non esiste.", eventType: 'error' };
         }

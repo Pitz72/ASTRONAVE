@@ -29,16 +29,16 @@ export const gameData: { [key: string]: Room } = {
             }},
             { regex: "^(vai) (nord|n|sud|s|est|e)$", handler: () => ({ description: "Non puoi andare in quella direzione.", eventType: 'error' })},
             // ESAMINA
-            { regex: "^(esamina|guarda) (oblo|nave|ombra|relitto|finestrino|vista)$", handler: () => ({ description: "Vedi la Nave Stellare aliena. È enorme, a forma di fuso allungato, e la sua superficie non riflette alcuna luce. Sembra un buco nel tessuto dello spazio. Non si vedono portelli, motori o segni di vita." }) },
+            { regex: "^(esamina|guarda) (oblo|nave|ombra|relitto|finestrino|vista|astronave|nave stellare)$", handler: () => ({ description: "Vedi la Nave Stellare aliena. È enorme, a forma di fuso allungato, e la sua superficie non riflette alcuna luce. Sembra un buco nel tessuto dello spazio. Non si vedono portelli, motori o segni di vita." }) },
             { regex: "^(esamina|guarda) (pannello|controlli|luce|console|schermi|comandi)$", handler: () => ({ description: "Sono i controlli della tua Santa Maria. La luce rossa dell'allarme di prossimità lampeggia con insistenza. Tutti gli altri sistemi sono nominali." }) },
             // ANALIZZA
-            { regex: "^(analizza) (nave|relitto|ombra|anomalia)$", handler: () => ({ description: "Il tuo multiscanner portatile emette un debole 'bip'. Il bersaglio è troppo lontano e la sua massa è troppo grande per ottenere una lettura dettagliata da questa distanza. L'unica cosa certa è l'assoluta assenza di emissioni energetiche.", eventType: 'magic' }) },
+            { regex: "^(analizza) (nave|relitto|ombra|anomalia|astronave|nave stellare)$", handler: () => ({ description: "Il tuo multiscanner portatile emette un debole 'bip'. Il bersaglio è troppo lontano e la sua massa è troppo grande per ottenere una lettura dettagliata da questa distanza. L'unica cosa certa è l'assoluta assenza di emissioni energetiche.", eventType: 'magic' }) },
             { regex: "^(analizza) (.+)$", handler: (state, match) => ({ description: `Analizzi ${match[2]}, ma non c'è nulla di anormale o interessante da segnalare.` }) },
             // USA / ATTIVA
             { regex: "^(usa|attiva|contatta|chiama) (radio|comunicazioni|nave)$", handler: () => ({ description: "Attivi la radio di prossimità. Provi su tutte le frequenze, standard e di emergenza. C'è solo silenzio. La nave aliena non risponde." }) },
             // PRENDI (fallimenti)
             { regex: "^(prendi) (controlli|pannello)$", handler: () => ({ description: "Sono parte integrante della tua nave, non puoi prenderli.", eventType: 'error' })},
-            { regex: "^(prendi) (nave)$", handler: () => ({ description: "Forse con una nave un po' più grande.", eventType: 'error' })},
+            { regex: "^(prendi) (nave|astronave|nave stellare)$", handler: () => ({ description: "Forse con una nave un po' più grande.", eventType: 'error' })},
         ]
     },
     "Stiva": {
@@ -90,6 +90,18 @@ export const gameData: { [key: string]: Room } = {
                 state.inventory.push("Kit di Manutenzione");
                 return { description: "OK, hai preso il Kit di Manutenzione.", eventType: 'item_pickup' };
             }},
+             { regex: "^(prendi) (taglierina|taglierina al plasma)$", handler: (state) => {
+                if (state.inventory.includes("Taglierina al Plasma")) {
+                    return { description: "Hai già la Taglierina al Plasma nel tuo inventario.", eventType: 'error' };
+                }
+                return { description: "Non vedi nessuna taglierina da prendere. Forse è dentro a qualcosa?", eventType: 'error' };
+            }},
+            { regex: "^(prendi) (batteria|batteria di emergenza)$", handler: (state) => {
+                if (state.inventory.includes("Batteria di Emergenza")) {
+                    return { description: "Hai già la Batteria di Emergenza nel tuo inventario.", eventType: 'error' };
+                }
+                return { description: "Non vedi nessuna batteria da prendere. Forse è dentro a qualcosa?", eventType: 'error' };
+            }},
             { regex: "^(prendi) (casse|minerale)$", handler: () => ({ description: "Sono troppo pesanti da sollevare a mano.", eventType: 'error' })},
             // USA / APRI / INDOSSA
             { regex: "^(indossa|usa) (tuta|tuta spaziale)$", handler: (state) => {
@@ -135,19 +147,30 @@ export const gameData: { [key: string]: Room } = {
                 if (!state.flags.isHoleCut) {
                     return { description: "Non c'è nessun posto dove entrare.", eventType: 'error' };
                 }
-                // Placeholder per Stanza 4
-                state.location = "Stanza 4 WIP"; 
-                return { description: "Ti infili nell'apertura scura, lasciandoti alle spalle lo spazio stellato. Il pannello che hai tagliato si richiude silenziosamente dietro di te, sigillandoti all'interno. (Work in Progress - Transizione alla Stanza 4)", eventType: 'movement' };
+                state.location = "Camera di Compensazione";
+                return { description: gameData["Camera di Compensazione"].description(state), eventType: 'movement' };
             }},
             { regex: "^(vai) (sud|s|ovest|o|est|e)$", handler: () => ({ description: "Ti muovi per qualche metro lungo lo scafo, ma il panorama non cambia. È una distesa monotona e infinita. Meglio non allontanarsi troppo dalla tua nave." }) },
             // ESAMINA
             { regex: "^(esamina|guarda) (scafo|nave|superficie|muro|parete)$", handler: () => ({ description: "Lo scafo è una distesa infinita di un materiale nero opaco, liscio al tatto anche attraverso i guanti della tuta. Non c'è un singolo rivetto, saldatura o pannello visibile. Sembra un unico, solido pezzo di oscurità." }) },
             { regex: "^(esamina|guarda) (santa maria|mia nave|nave da carico)$", handler: () => ({ description: "La tua nave da carico sembra piccola e vulnerabile, agganciata a questo colosso silenzioso. Le sue luci esterne sono l'unica fonte di illuminazione familiare in questo vuoto." }) },
             { regex: "^(esamina|guarda) (stelle|spazio)$", handler: () => ({ description: "Le stelle sono fredde e immobili. La loro luce non riesce a scalfire la tenebra dello scafo alieno." }) },
+            { regex: "^(esamina|guarda) (crepa|giuntura|discontinuita|fessura)$", handler: (state) => {
+                if (state.flags.knowsAboutCrack) {
+                    return { description: "Osservando da vicino il punto indicato dal tuo scanner, noti una linea sottilissima, quasi impercettibile. Non è una crepa da danno, sembra più una giuntura di manutenzione sigillata con una precisione disumana. È l'unica imperfezione che riesci a trovare su questo scafo altrimenti perfetto." };
+                }
+                return { description: "Giri intorno, ispezionando lo scafo, ma non vedi nessuna crepa o giuntura evidente. La superficie è perfettamente liscia.", eventType: 'error' };
+            }},
             // ANALIZZA
             { regex: "^(analizza) (scafo|nave|superficie)$", handler: (state) => {
                 state.flags.knowsAboutCrack = true;
-                return { description: "Il tuo multiscanner emette un debole segnale. L'analisi della superficie indica che è composta da una lega di carbonio e metalli sconosciuti, estremamente densa. Tuttavia, il sensore rileva una sottile discontinuità strutturale a pochi passi da te, quasi come una crepa saldata dall'interno. È quasi invisibile a occhio nudo.", eventType: 'magic' };
+                return { description: "Il tuo multiscanner emette un debole segnale. L'analisi della superficie indica che è composta da una lega di carbonio e metalli sconosciuti, estremamente densa. Tuttavia, il sensore rileva una sottile discontinuità strutturale a pochi passi da te, quasi come una giuntura sigillata dall'interno. È quasi invisibile a occhio nudo.", eventType: 'magic' };
+            }},
+            { regex: "^(analizza) (crepa|giuntura|discontinuita|fessura)$", handler: (state) => {
+                if (state.flags.knowsAboutCrack) {
+                    return { description: "Lo scanner conferma che la giuntura è il punto strutturalmente più debole dello scafo esterno. Il materiale qui è più sottile, progettato per essere tagliato e poi risaldato. È la tua unica via d'ingresso.", eventType: 'magic' };
+                }
+                return { description: "Non hai ancora individuato una crepa da analizzare.", eventType: 'error' };
             }},
             // USA
             { regex: "^(usa) (taglierina|taglierina al plasma) su (crepa|giuntura|discontinuita|fessura)$", handler: (state) => {
@@ -163,10 +186,72 @@ export const gameData: { [key: string]: Room } = {
                 state.flags.isHoleCut = true;
                 return { description: "Attivi la taglierina al plasma. Un getto di luce brillante e silenziosa incide il metallo oscuro. Dopo un momento, la sezione che hai tagliato si stacca, rivelando un'apertura scura. Sembra l'ingresso di una camera di compensazione. Puoi ENTRARE.", eventType: 'item_use' };
             }},
-            { regex: "^(usa) (taglierina|taglierina al plasma) su (scafo)$", handler: () => ({ description: "Lo scafo è troppo vasto. Devi essere più specifico.", eventType: 'error' })},
+            { regex: "^(usa) (taglierina|taglierina al plasma) su (scafo)$", handler: () => ({ description: "Lo scafo è troppo vasto e resistente. Devi trovare un punto debole.", eventType: 'error' })},
             { regex: "^(usa) (taglierina|taglierina al plasma)$", handler: () => ({ description: "Cosa vuoi tagliare?", eventType: 'error' })},
             { regex: "^(usa) (batteria|batteria di emergenza) su (.+)$", handler: () => ({ description: "Appoggi la batteria contro la superficie. Non succede assolutamente nulla." })},
             { regex: "^(usa) (batteria|batteria di emergenza)$", handler: () => ({ description: "Cosa vuoi alimentare?", eventType: 'error' })},
+        ]
+    },
+    "Camera di Compensazione": {
+        description: (state) => {
+            let desc = "CAMERA DI COMPENSAZIONE\n\nSei all'interno. La pesantezza del silenzio è quasi fisica. È una piccola stanza buia, dalle pareti lisce e prive di angoli. L'aria, se così si può chiamare, è immobile, fredda e senza odore. Di fronte a te, a EST, c'è una porta interna, perfettamente integrata nella parete. Accanto ad essa noti un piccolo pannello di controllo, completamente spento.";
+            
+            if (state.flags.isAirlockDoorPowered && !state.flags.isAirlockDoorOpen) {
+                desc += "\nUna singola linea di luce ambrata brilla debolmente sul pannello."
+            }
+             desc += "\nL'apertura da cui sei entrato si è richiusa, senza lasciare alcuna fessura visibile.";
+            return desc;
+        },
+        commands: [
+            // MOVIMENTO
+            { regex: "^(vai) (est|e|dentro|corridoio)$", handler: (state) => {
+                if (state.flags.isAirlockDoorOpen) {
+                    state.location = "Stanza 5 WIP";
+                    return { description: "Varchi la soglia, entrando in un lungo corridoio buio.", eventType: 'movement' };
+                }
+                return { description: "Devi prima aprire la porta.", eventType: 'error' };
+            }},
+            { regex: "^(vai) (ovest|o|indietro|fuori)$", handler: () => ({ description: "L'apertura da cui sei entrato si è sigillata senza lasciare traccia. Non puoi tornare indietro." })},
+            // ESAMINA
+            { regex: "^(esamina|guarda) (porta|uscita|porta interna)$", handler: () => ({ description: "È una porta monolitica, dello stesso materiale nero opaco dello scafo. Non ha maniglie, cerniere o fessure visibili. Sembra sigillata ermeticamente." }) },
+            { regex: "^(esamina|guarda) (pannello|pannello di controllo|controlli)$", handler: () => ({ description: "È una piccola superficie liscia e scura incassata nella parete. Non ci sono schermi, pulsanti o interruttori visibili. Sembra inerte." }) },
+            { regex: "^(esamina|guarda) (muro|pareti|soffitto|pavimento)$", handler: () => ({ description: "Le pareti della stanza sono curve e senza giunture. La geometria è strana, quasi organica. Toccarle trasmette una sensazione di freddo assoluto." }) },
+            // ANALIZZA
+            { regex: "^(analizza) (porta)$", handler: () => ({ description: "L'analisi rivela un complesso meccanismo di chiusura magnetico all'interno della porta. È completamente privo di energia.", eventType: 'magic' }) },
+            { regex: "^(analizza) (pannello|pannello di controllo)$", handler: (state) => {
+                state.flags.knowsAboutPanelPower = true;
+                return { description: "Il tuo multiscanner rileva una micro-rete di fibre energetiche sotto la superficie liscia. Il sistema è progettato per gestire la pressurizzazione della stanza e l'apertura della porta interna, ma è dormiente. Sembra esserci una porta di accesso per una fonte di energia esterna a basso voltaggio.", eventType: 'magic' };
+            }},
+            // USA
+            { regex: "^(usa) (batteria|batteria di emergenza) su (pannello|pannello di controllo)$", handler: (state) => {
+                if (!state.inventory.includes("Batteria di Emergenza")) {
+                    return { description: "Non hai una batteria.", eventType: 'error' };
+                }
+                if (!state.flags.knowsAboutPanelPower) {
+                    return { description: "Non sai come usare la batteria su questo pannello.", eventType: 'error' };
+                }
+                if (state.flags.isAirlockDoorPowered) {
+                    return { description: "Il pannello è già alimentato.", eventType: 'error' };
+                }
+                state.flags.isAirlockDoorPowered = true;
+                const batteryIndex = state.inventory.indexOf("Batteria di Emergenza");
+                if (batteryIndex > -1) {
+                    state.inventory.splice(batteryIndex, 1);
+                }
+                return { description: "Seguendo le indicazioni del tuo scanner, trovi un piccolo incavo quasi invisibile sul pannello. Inserisci il connettore della batteria di emergenza. Il pannello si anima con un debole ronzio e una singola linea di luce ambrata appare sulla sua superficie. Senti un 'clack' sordo provenire dalla porta a est. Sembra che ora sia possibile aprirla.", eventType: 'item_use' };
+            }},
+            { regex: "^(usa) (taglierina|taglierina al plasma) su (porta)$", handler: () => ({ description: "La tua taglierina al plasma graffia a malapena la superficie. Questo materiale è molto più resistente di quello dello scafo esterno. Non puoi aprirla con la forza.", eventType: 'error' })},
+            // APRI
+            { regex: "^(apri) (porta)$", handler: (state) => {
+                if (state.flags.isAirlockDoorOpen) {
+                    return { description: "La porta è già aperta.", eventType: 'error' };
+                }
+                if (!state.flags.isAirlockDoorPowered) {
+                    return { description: "La porta è sigillata e non si muove. Non c'è alcun meccanismo di apertura visibile.", eventType: 'error' };
+                }
+                state.flags.isAirlockDoorOpen = true;
+                return { description: "Appoggi una mano sulla linea di luce ambrata del pannello. Con un sibilo quasi impercettibile, la porta si ritrae silenziosamente nella parete, rivelando un lungo corridoio.", eventType: 'magic' };
+            }},
         ]
     }
 };
