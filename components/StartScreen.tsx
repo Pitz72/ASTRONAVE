@@ -14,20 +14,18 @@ const StartScreen: React.FC<StartScreenProps> = ({ onChoice }) => {
     }, [onChoice]);
 
     return (
-        <div className="w-full h-full flex flex-col items-center justify-center text-center p-4">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl mb-4 text-green-300">
-                IL RELITTO SILENTE
-            </h1>
-            <p className="mb-2 text-green-500">di Simone Pizzi</p>
-            <p className="mb-8 text-green-500">Anno: 1980+45</p>
-            
-            <div className="text-left text-2xl space-y-2">
-                <p>&gt; 1. ISTRUZIONI</p>
-                <p>&gt; 2. AVVIA GIOCO</p>
+        <div className="w-full h-full flex flex-col items-center justify-around text-center p-8">
+            <div>
+                <h1 className="text-8xl mb-8 text-green-300 animate-blink">
+                    IL RELITTO SILENTE
+                </h1>
+                <p className="mb-4 text-green-500">di Simone Pizzi</p>
+                <p className="text-green-500">Anno: 1980+45</p>
+                <p className="mt-4 text-green-500">Un'avventura testuale dalle profondità oscure dello spazio</p>
             </div>
-
-            <div className="flex items-center mt-6">
-                <div className="w-4 h-7 bg-green-400 animate-blink"></div>
+            
+            <div className="text-5xl">
+                <p>&gt; 1. ISTRUZIONI - 2. GIOCA</p>
             </div>
         </div>
     );

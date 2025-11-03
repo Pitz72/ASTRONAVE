@@ -10,9 +10,10 @@ Un mistero fantascientifico. Sei il solitario pilota di una nave da carico che s
 
 ## Caratteristiche
 
+- **Display Virtuale a Risoluzione Fissa**: Il gioco viene renderizzato all'interno di un "monitor virtuale" con una risoluzione nativa di 1920x1080 (16:9). Questo contenitore si adatta dinamicamente a qualsiasi dimensione della finestra del browser, mantenendo sempre l'aspect ratio corretto e garantendo un'esperienza visiva coerente e perfettamente centrata su qualsiasi schermo.
 - **Estetica Retrò**: Interfaccia che simula un monitor a fosfori verdi, completa di scanlines e font pixelato.
 - **Esperienza Narrativa Curata**: Dimentica la casualità delle AI. Ogni testo, enigma e interazione è stato scritto a mano per garantire un'esperienza coerente e avvincente. La storia si svela su più livelli: attraverso l'ambiente, i log alieni da decifrare e le rivelazioni che collegano tutti gli indizi.
-- **Menu Interattivo e Tutorial**: Un menu di avvio chiaro e una schermata di istruzioni dettagliata che spiega le meccaniche di gioco, inclusa la differenza cruciale tra 'esaminare' (vedere) e 'analizzare' (capire), per un'esperienza di onboarding fluida.
+- **Onboarding Guidato**: Una schermata di avvio riprogettata che introduce immediatamente i concetti di base del gioco e i comandi essenziali. Include un menu chiaro per accedere a istruzioni dettagliate o iniziare subito l'avventura, garantendo un'esperienza di onboarding fluida.
 - **Parser di Comandi Migliorato**: Interagisci con il mondo usando comandi in linguaggio naturale (in italiano). Il parser gestisce comandi in modo intelligente, ignorando maiuscole/minuscole, articoli (il, la, un, ecc.) e accenti per un'esperienza più fluida.
 - **Narrazione a Ritmo Controllato**: I testi più lunghi vengono presentati in segmenti, attendendo l'input del giocatore per continuare. Questo migliora la leggibilità e permette di assorbire la storia al proprio ritmo.
 - **Meccanica di Traduzione**: Trova frammenti di dati alieni e usa il tuo scanner per costruire una matrice di traduzione, svelando lentamente la storia e lo scopo del relitto.

@@ -1,5 +1,5 @@
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useLayoutEffect } from 'react';
 import { GameState, GameResponse, PlayerState } from './types';
 import { processCommand } from './game/gameLogic';
 import CommandLine from './components/CommandLine';
@@ -23,6 +23,47 @@ const INITIAL_PLAYER_STATE: PlayerState = {
   flags: {},
 };
 
+const NATIVE_WIDTH = 1920;
+const NATIVE_HEIGHT = 1080;
+
+const useGameScale = () => {
+    const [scaleStyle, setScaleStyle] = useState<React.CSSProperties>({});
+
+    useLayoutEffect(() => {
+        const updateScale = () => {
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+            
+            const scaleX = windowWidth / NATIVE_WIDTH;
+            const scaleY = windowHeight / NATIVE_HEIGHT;
+            
+            const scale = Math.min(scaleX, scaleY);
+            
+            const scaledWidth = NATIVE_WIDTH * scale;
+            const scaledHeight = NATIVE_HEIGHT * scale;
+            
+            const offsetX = (windowWidth - scaledWidth) / 2;
+            const offsetY = (windowHeight - scaledHeight) / 2;
+
+            setScaleStyle({
+                position: 'absolute',
+                transformOrigin: 'top left',
+                transform: `scale(${scale})`,
+                left: `${offsetX}px`,
+                top: `${offsetY}px`,
+            });
+        };
+
+        window.addEventListener('resize', updateScale);
+        updateScale(); // Initial call
+
+        return () => window.removeEventListener('resize', updateScale);
+    }, []);
+
+    return scaleStyle;
+};
+
+
 const paginateText = (text: string | null): { visible: string, remaining: string | null } => {
     if (!text) return { visible: '', remaining: null };
     if (text.includes(PAUSE_MARKER)) {
@@ -38,15 +79,15 @@ const paginateText = (text: string | null): { visible: string, remaining: string
 const BlinkingPrompt: React.FC<{ text: string }> = ({ text }) => (
     <div className="flex items-center mt-4">
         <p>{text}</p>
-        <div className="w-3 h-5 bg-green-400 animate-blink ml-2"></div>
+        <div className="w-4 h-6 bg-green-400 animate-blink ml-3"></div>
     </div>
 );
 
 const instructionsText = `ISTRUZIONI DI GIOCO
 Benvenuto a bordo de IL RELITTO SILENTE. Questa è un'avventura testuale tradizionale. Interagisci con il mondo scrivendo comandi semplici, composti di solito da un VERBO e un NOME (es. PRENDI LASTRA).
 
-<h3 class="text-lg sm:text-xl text-yellow-300 mb-2">COMANDI FONDAMENTALI</h3>
-<ul class="list-disc list-inside mb-4 space-y-1">
+<h3 class="text-4xl text-yellow-300 mb-4">COMANDI FONDAMENTALI</h3>
+<ul class="list-disc list-inside mb-6 space-y-2">
     <li><span class="font-bold">GUARDA</span> (o <span class="font-bold">ESAMINA STANZA</span>): Descrive il luogo in cui ti trovi.</li>
     <li><span class="font-bold">VAI [direzione]</span>: Ti sposta (es. <span class="font-bold">VAI NORD</span>, <span class="font-bold">OVEST</span>). Puoi anche usare le abbreviazioni (N, S, O, E).</li>
     <li><span class="font-bold">PRENDI [oggetto]</span>: Raccoglie un oggetto e lo mette nel tuo inventario.</li>
@@ -55,13 +96,13 @@ Benvenuto a bordo de IL RELITTO SILENTE. Questa è un'avventura testuale tradizi
     <li><span class="font-bold">AIUTO</span>: Mostra un riepilogo di questi comandi in qualsiasi momento.</li>
 </ul>
 ${PAUSE_MARKER}
-<h3 class="text-lg sm:text-xl text-yellow-300 mb-2">LA MECCANICA CHIAVE: VEDERE VS CAPIRE</h3>
-<p class="mb-2">In questo gioco, osservare e analizzare sono due azioni diverse e fondamentali.</p>
-<p class="mb-2"><span class="font-bold">ESAMINA [oggetto]</span><br/>Usa i tuoi occhi. Ti darà una descrizione fisica e visiva di un oggetto o di un dettaglio.<br/><em class="text-green-500">Esempio: ESAMINA PANNELLO ti dirà che è una superficie liscia e scura.</em></p>
-<p class="mb-4"><span class="font-bold">ANALIZZA [oggetto]</span><br/>Usa il tuo multiscanner portatile. Ti fornirà dati tecnici, informazioni nascoste, letture energetiche o analisi scientifiche. È la chiave per svelare i segreti del relitto.<br/><em class="text-green-500">Esempio: ANALIZZA PANNELLO potrebbe rivelare la rete energetica sottostante e come alimentarla.</em></p>
+<h3 class="text-4xl text-yellow-300 mb-4">LA MECCANICA CHIAVE: VEDERE VS CAPIRE</h3>
+<p class="mb-4">In questo gioco, osservare e analizzare sono due azioni diverse e fondamentali.</p>
+<p class="mb-4"><span class="font-bold">ESAMINA [oggetto]</span><br/>Usa i tuoi occhi. Ti darà una descrizione fisica e visiva di un oggetto o di un dettaglio.<br/><em class="text-green-500">Esempio: ESAMINA PANNELLO ti dirà che è una superficie liscia e scura.</em></p>
+<p class="mb-6"><span class="font-bold">ANALIZZA [oggetto]</span><br/>Usa il tuo multiscanner portatile. Ti fornirà dati tecnici, informazioni nascoste, letture energetiche o analisi scientifiche. È la chiave per svelare i segreti del relitto.<br/><em class="text-green-500">Esempio: ANALIZZA PANNELLO potrebbe rivelare la rete energetica sottostante e come alimentarla.</em></p>
 
-<h3 class="text-lg sm:text-xl text-yellow-300 mb-2">CONSIGLI</h3>
-<ul class="list-disc list-inside space-y-1">
+<h3 class="text-4xl text-yellow-300 mb-4">CONSIGLI</h3>
+<ul class="list-disc list-inside space-y-2">
     <li>Non puoi morire. L'obiettivo è il mistero, non la sopravvivenza.</li>
     <li>L'osservazione è tutto. Analizza tutto ciò che sembra fuori posto.</li>
     <li>Sii specifico. A volte <span class="font-bold">USA TAGLIERINA</span> non basta. Devi specificare <span class="font-bold">USA TAGLIERINA SU CREPA</span>.</li>
@@ -115,7 +156,7 @@ const PaginatedScreen: React.FC<{
     }, [remainingText, isComplete, onComplete]);
 
     return (
-        <div className="flex-grow overflow-y-auto pr-2 no-scrollbar p-2 sm:p-4 text-left text-sm sm:text-base">
+        <div className="flex-grow overflow-y-auto pr-4 no-scrollbar p-8 text-left text-2xl">
             <div className="whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: displayedText }} />
             {isComplete 
                 ? <BlinkingPrompt text={finalPrompt} />
@@ -301,12 +342,22 @@ const App: React.FC = () => {
     }
   };
 
+  const scaleStyle = useGameScale();
+
   return (
-    <div className="bg-black min-h-screen text-green-400 p-2 sm:p-4 md:p-6 flex items-center justify-center text-base md:text-lg">
-        <div className="relative w-full max-w-4xl h-[90vh] sm:h-[85vh] border-4 border-green-800 bg-black/80 rounded-lg shadow-2xl shadow-green-900/50 p-4 flex flex-col overflow-hidden">
-            <div className="scanline"></div>
-            {renderGameContent()}
-        </div>
+    <div className="bg-black w-screen h-screen overflow-hidden text-green-400">
+      <div 
+        id="game-container"
+        style={{
+          width: '1920px',
+          height: '1080px',
+          ...scaleStyle
+        }}
+        className="relative text-3xl border-4 border-green-800 bg-black/80 rounded-lg shadow-2xl shadow-green-900/50 p-8 flex flex-col overflow-hidden"
+      >
+        <div className="scanline"></div>
+        {renderGameContent()}
+      </div>
     </div>
   );
 };
