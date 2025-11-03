@@ -10,7 +10,7 @@ export type GameEventType = 'item_pickup' | 'item_use' | 'magic' | 'movement' | 
 export interface PlayerState {
     location: string;
     inventory: string[];
-    flags: { [key: string]: boolean };
+    flags: { [key: string]: any };
 }
 
 export interface GameResponse {
@@ -18,4 +18,5 @@ export interface GameResponse {
     eventType: GameEventType;
     clearScreen?: boolean;
     gameOver?: string | null;
+    continueText?: string | null;
 }

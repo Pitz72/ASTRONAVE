@@ -68,12 +68,7 @@ export const processCommand = (command: string, currentState: PlayerState): { re
 
     const currentRoomData = gameData[newState.location];
     if (!currentRoomData) {
-        // Fallback per stanze non ancora implementate
-        if (newState.location === "Stanza 5 WIP") {
-             response = { description: "Il corridoio prosegue nell'oscurità. Questa parte del gioco non è ancora stata creata.", eventType: 'error' };
-        } else {
-             response = { description: "ERRORE CRITICO: La stanza non esiste.", eventType: 'error' };
-        }
+        response = { description: "ERRORE CRITICO: La stanza non esiste.", eventType: 'error' };
         return { response, newState };
     }
     
@@ -82,11 +77,23 @@ export const processCommand = (command: string, currentState: PlayerState): { re
         const match = normalizedCommand.match(new RegExp(cmd.regex, 'i'));
         if (match) {
             const result = cmd.handler(newState, match);
+
+            let description = result.description;
+            let continueText: string | null = null;
+            const pauseMarker = "[PAUSE]";
+            if (description.includes(pauseMarker)) {
+                const parts = description.split(pauseMarker);
+                description = parts[0];
+                continueText = parts[1];
+            }
+            
             response = {
-                description: result.description,
+                description: description,
                 eventType: result.eventType || null,
                 gameOver: result.gameOver || null,
+                continueText: continueText
             };
+
             // Se la location è cambiata, imposta clearScreen
             if (newState.location !== currentState.location) {
                 response.clearScreen = true;

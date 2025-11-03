@@ -28,6 +28,7 @@ const App: React.FC = () => {
   const [historyIndex, setHistoryIndex] = useState<number>(-1);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [playerState, setPlayerState] = useState<PlayerState>(INITIAL_PLAYER_STATE);
+  const [continuation, setContinuation] = useState<string | null>(null);
 
   const handleGameResponse = useCallback((res: GameResponse) => {
     if (!res.description) return;
@@ -49,10 +50,17 @@ const App: React.FC = () => {
          break;
     }
 
+    const prompt = `<span class="text-yellow-300 animate-blink">[ PREMI UN TASTO PER CONTINUARE ]</span>`;
+
     if (res.clearScreen) {
         setOutput([res.description]);
     } else {
         setOutput(prev => [...prev, `> ${res.description}`]);
+    }
+
+    if (res.continueText) {
+        setOutput(prev => [...prev, prompt]);
+        setContinuation(res.continueText);
     }
     
     if (res.gameOver) {
@@ -60,6 +68,22 @@ const App: React.FC = () => {
       setGameState(GameState.GameOver);
     }
   }, []);
+
+  useEffect(() => {
+    if (!continuation) return;
+
+    const handleContinue = (event: KeyboardEvent) => {
+        event.preventDefault();
+        setOutput(prev => [...prev.slice(0, -1), continuation]); // Replace prompt with continuation text
+        setContinuation(null);
+    };
+
+    window.addEventListener('keydown', handleContinue, { once: true });
+    
+    return () => {
+      window.removeEventListener('keydown', handleContinue);
+    };
+  }, [continuation]);
 
   const startGame = useCallback(() => {
     setPlayerState(INITIAL_PLAYER_STATE);
@@ -161,7 +185,7 @@ const App: React.FC = () => {
             <TerminalOutput output={output} />
             <CommandLine 
               onSubmit={submitCommand} 
-              isLoading={isLoading || gameState === GameState.GameOver}
+              isLoading={isLoading || gameState === GameState.GameOver || !!continuation}
               history={history}
               historyIndex={historyIndex}
               setHistoryIndex={setHistoryIndex}
