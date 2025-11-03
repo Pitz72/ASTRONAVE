@@ -16,12 +16,12 @@ const StartScreen: React.FC<StartScreenProps> = ({ onChoice }) => {
     return (
         <div className="w-full h-full flex flex-col items-center justify-around text-center p-8">
             <div>
-                <h1 className="text-8xl mb-8 text-green-300 animate-blink">
+                <h1 className="text-9xl mb-8 text-green-300 animate-blink">
                     IL RELITTO SILENTE
                 </h1>
-                <p className="mb-4 text-green-500">di Simone Pizzi</p>
-                <p className="text-green-500">Anno: 1980+45</p>
-                <p className="mt-4 text-green-500">Un'avventura testuale dalle profondità oscure dello spazio</p>
+                <p className="text-5xl mb-4 text-green-500">di Simone Pizzi</p>
+                <p className="text-5xl text-green-500">Anno: 1980+45</p>
+                <p className="mt-12 text-green-500">Un'avventura testuale dalle profondità oscure dello spazio</p>
             </div>
             
             <div className="text-5xl">

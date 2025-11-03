@@ -1,5 +1,5 @@
 
-import React, { useState, useCallback, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useCallback, useEffect, useLayoutEffect, useRef } from 'react';
 import { GameState, GameResponse, PlayerState } from './types';
 import { processCommand } from './game/gameLogic';
 import CommandLine from './components/CommandLine';
@@ -87,20 +87,20 @@ const instructionsText = `ISTRUZIONI DI GIOCO
 Benvenuto a bordo de IL RELITTO SILENTE. Questa è un'avventura testuale tradizionale. Interagisci con il mondo scrivendo comandi semplici, composti di solito da un VERBO e un NOME (es. PRENDI LASTRA).
 
 <h3 class="text-4xl text-yellow-300 mb-4">COMANDI FONDAMENTALI</h3>
-<ul class="list-disc list-inside mb-6 space-y-2">
-    <li><span class="font-bold">GUARDA</span> (o <span class="font-bold">ESAMINA STANZA</span>): Descrive il luogo in cui ti trovi.</li>
-    <li><span class="font-bold">VAI [direzione]</span>: Ti sposta (es. <span class="font-bold">VAI NORD</span>, <span class="font-bold">OVEST</span>). Puoi anche usare le abbreviazioni (N, S, O, E).</li>
-    <li><span class="font-bold">PRENDI [oggetto]</span>: Raccoglie un oggetto e lo mette nel tuo inventario.</li>
-    <li><span class="font-bold">USA [oggetto] SU [bersaglio]</span>: Usa un oggetto su qualcos'altro (es. <span class="font-bold">USA CHIAVE SU PORTA</span>).</li>
-    <li><span class="font-bold">INVENTARIO</span> (o <span class="font-bold">I</span>): Mostra gli oggetti che possiedi.</li>
-    <li><span class="font-bold">AIUTO</span>: Mostra un riepilogo di questi comandi in qualsiasi momento.</li>
-</ul>
+<p class="mb-6">
+<span class="font-bold">GUARDA</span> (o <span class="font-bold">ESAMINA STANZA</span>): Descrive il luogo in cui ti trovi.<br/>
+<span class="font-bold">VAI [direzione]</span>: Ti sposta (es. <span class="font-bold">VAI NORD</span>, <span class="font-bold">OVEST</span>). Puoi anche usare le abbreviazioni (N, S, O, E).<br/>
+<span class="font-bold">PRENDI [oggetto]</span>: Raccoglie un oggetto e lo mette nel tuo inventario.<br/>
+<span class="font-bold">USA [oggetto] SU [bersaglio]</span>: Usa un oggetto su qualcos'altro (es. <span class="font-bold">USA CHIAVE SU PORTA</span>).<br/>
+<span class="font-bold">INVENTARIO</span> (o <span class="font-bold">I</span>): Mostra gli oggetti che possiedi.<br/>
+<span class="font-bold">AIUTO</span>: Mostra un riepilogo di questi comandi in qualsiasi momento.
+</p>
 ${PAUSE_MARKER}
 <h3 class="text-4xl text-yellow-300 mb-4">LA MECCANICA CHIAVE: VEDERE VS CAPIRE</h3>
 <p class="mb-4">In questo gioco, osservare e analizzare sono due azioni diverse e fondamentali.</p>
 <p class="mb-4"><span class="font-bold">ESAMINA [oggetto]</span><br/>Usa i tuoi occhi. Ti darà una descrizione fisica e visiva di un oggetto o di un dettaglio.<br/><em class="text-green-500">Esempio: ESAMINA PANNELLO ti dirà che è una superficie liscia e scura.</em></p>
 <p class="mb-6"><span class="font-bold">ANALIZZA [oggetto]</span><br/>Usa il tuo multiscanner portatile. Ti fornirà dati tecnici, informazioni nascoste, letture energetiche o analisi scientifiche. È la chiave per svelare i segreti del relitto.<br/><em class="text-green-500">Esempio: ANALIZZA PANNELLO potrebbe rivelare la rete energetica sottostante e come alimentarla.</em></p>
-
+${PAUSE_MARKER}
 <h3 class="text-4xl text-yellow-300 mb-4">CONSIGLI</h3>
 <ul class="list-disc list-inside space-y-2">
     <li>Non puoi morire. L'obiettivo è il mistero, non la sopravvivenza.</li>
@@ -124,6 +124,7 @@ const PaginatedScreen: React.FC<{
     const [displayedText, setDisplayedText] = useState('');
     const [remainingText, setRemainingText] = useState<string | null>(null);
     const [isComplete, setIsComplete] = useState(false);
+    const scrollRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const { visible, remaining } = paginateText(fullText);
@@ -136,17 +137,20 @@ const PaginatedScreen: React.FC<{
     
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
-            playKeystrokeSound();
             if (isComplete) {
                 onComplete(event);
                 return;
             }
-            if (remainingText) {
-                const { visible, remaining } = paginateText(remainingText);
-                setDisplayedText(prev => prev + visible);
-                setRemainingText(remaining);
-                if (!remaining) {
-                    setIsComplete(true);
+            
+            if (event.key === 'Enter') {
+                playKeystrokeSound();
+                if (remainingText) {
+                    const { visible, remaining } = paginateText(remainingText);
+                    setDisplayedText(prev => prev + visible);
+                    setRemainingText(remaining);
+                    if (!remaining) {
+                        setIsComplete(true);
+                    }
                 }
             }
         };
@@ -155,12 +159,18 @@ const PaginatedScreen: React.FC<{
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [remainingText, isComplete, onComplete]);
 
+    useEffect(() => {
+        if (scrollRef.current) {
+            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+        }
+    }, [displayedText]);
+
     return (
-        <div className="flex-grow overflow-y-auto pr-4 no-scrollbar p-8 text-left text-2xl">
+        <div ref={scrollRef} className="flex-grow overflow-y-auto pr-4 no-scrollbar p-8 text-left text-4xl">
             <div className="whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: displayedText }} />
             {isComplete 
                 ? <BlinkingPrompt text={finalPrompt} />
-                : <BlinkingPrompt text="Premi un tasto per continuare..." />
+                : <BlinkingPrompt text="Premi RETURN per proseguire..." />
             }
         </div>
     );
@@ -209,10 +219,11 @@ const App: React.FC = () => {
   useEffect(() => {
     if (!continuation) return;
 
-    const continuePrompt = `<span class="text-yellow-300 animate-blink">[ PREMI UN TASTO PER CONTINUARE ]</span>`;
+    const continuePrompt = `<span class="text-yellow-300 animate-blink">[ PREMI INVIO PER CONTINUARE ]</span>`;
     setOutput(prev => [...prev, continuePrompt]);
 
     const handleContinue = (event: KeyboardEvent) => {
+        if (event.key !== 'Enter') return;
         event.preventDefault();
         playKeystrokeSound();
         const textToPaginate = continuation;
@@ -317,13 +328,23 @@ const App: React.FC = () => {
         return <PaginatedScreen 
                     fullText={instructionsText} 
                     finalPrompt="Premi INVIO per tornare al menu principale"
-                    onComplete={(e) => { if(e.key === 'Enter') setGameState(GameState.StartMenu) }}
+                    onComplete={(e) => { 
+                        if(e.key === 'Enter') {
+                            playKeystrokeSound();
+                            setGameState(GameState.StartMenu);
+                        }
+                    }}
                 />;
       case GameState.Intro:
         return <PaginatedScreen 
                     fullText={introText}
                     finalPrompt="Premi INVIO per iniziare"
-                    onComplete={(e) => { if(e.key === 'Enter') startGame() }}
+                    onComplete={(e) => {
+                        if(e.key === 'Enter') {
+                            playKeystrokeSound();
+                            startGame();
+                        }
+                    }}
                 />;
       case GameState.Playing:
       case GameState.GameOver:
@@ -353,7 +374,7 @@ const App: React.FC = () => {
           height: '1080px',
           ...scaleStyle
         }}
-        className="relative text-3xl border-4 border-green-800 bg-black/80 rounded-lg shadow-2xl shadow-green-900/50 p-8 flex flex-col overflow-hidden"
+        className="relative text-5xl border-4 border-green-800 bg-black/80 rounded-lg shadow-2xl shadow-green-900/50 p-8 flex flex-col overflow-hidden"
       >
         <div className="scanline"></div>
         {renderGameContent()}
