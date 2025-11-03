@@ -276,8 +276,8 @@ export const gameData: { [key: string]: Room } = {
             }},
             { regex: "^((vai|va) )?(sud|s)$", handler: (state) => {
                 if (state.flags.isSouthDoorOpen) {
-                    state.location = "Stanza 7 WIP";
-                    return { description: gameData["Stanza 7 WIP"].description(state), eventType: 'movement' };
+                    state.location = "Alloggi dell'Equipaggio";
+                    return { description: gameData["Alloggi dell'Equipaggio"].description(state), eventType: 'movement' };
                 }
                 return { description: "La porta a sud è chiusa.", eventType: 'error' };
             }},
@@ -354,7 +354,7 @@ export const gameData: { [key: string]: Room } = {
             // ESAMINA
             { regex: "^(esamina|guarda) (postazioni|controlli|console)$", handler: (state) => {
                 let desc = "Sono postazioni di controllo lisce e prive di comandi fisici. La loro superficie è scura e fredda. Sembrano progettate per essere usate da creature con una fisionomia molto diversa dalla tua.";
-                if (!state.inventory.includes("Cristallo Dati Opaco")) {
+                if (!state.inventory.includes("Cristallo Dati Opaco") && !state.flags.cristalloPreso) {
                      desc += " Su una di queste, noti un piccolo oggetto cristallino appoggiato in un recesso.";
                      state.flags.spottedCrystal = true;
                 } else {
@@ -366,7 +366,7 @@ export const gameData: { [key: string]: Room } = {
             { regex: "^(esamina|guarda) (struttura|stella|centro stanza)$", handler: () => ({ description: "È una scultura metallica complessa, formata da anelli e punte interconnessi. Sembra un proiettore olografico di incredibile complessità, ma è completamente inerte." }) },
             { regex: "^(esamina|guarda) (cupola|soffitto|cristallo nero)$", handler: () => ({ description: "La cupola sopra di te è fatta di un materiale nero e traslucido. Probabilmente un tempo mostrava il panorama stellare, ma ora è solo un vuoto oscuro." }) },
             { regex: "^(esamina|guarda) (cristallo|oggetto|cristallo dati)$", handler: (state) => {
-                const hasCrystalInRoom = state.flags.spottedCrystal && !state.inventory.includes("Cristallo Dati Opaco");
+                const hasCrystalInRoom = state.flags.spottedCrystal && !state.flags.cristalloPreso;
                 const hasCrystalInInv = state.inventory.includes("Cristallo Dati Opaco");
                 if (hasCrystalInRoom || hasCrystalInInv) {
                     return { description: "È un cristallo lattiginoso, a forma di goccia, tiepido al tatto. È opaco e non riesci a vedere al suo interno." };
@@ -376,7 +376,7 @@ export const gameData: { [key: string]: Room } = {
             // ANALIZZA
             { regex: "^(analizza) (struttura|stella)$", handler: () => ({ description: "L'analisi conferma che si tratta di un proiettore olografico per la navigazione. È collegato ai sistemi principali della nave, ma entrambi sono in uno stato di ibernazione profonda, privi di energia.", eventType: 'magic' }) },
             { regex: "^(analizza) (cristallo|cristallo dati)$", handler: (state) => {
-                const hasCrystalInRoom = state.flags.spottedCrystal && !state.inventory.includes("Cristallo Dati Opaco");
+                const hasCrystalInRoom = state.flags.spottedCrystal && !state.flags.cristalloPreso;
                 const hasCrystalInInv = state.inventory.includes("Cristallo Dati Opaco");
                 if (hasCrystalInRoom || hasCrystalInInv) {
                     return { description: "Lo scanner identifica l'oggetto come un dispositivo di memorizzazione dati ad altissima densità. La sua struttura cristallina è inerte. Per leggere i dati contenuti, sembra richiedere una carica energetica specifica, quasi come un 'risveglio' bio-elettrico.", eventType: 'magic' };
@@ -385,25 +385,89 @@ export const gameData: { [key: string]: Room } = {
             }},
             // PRENDI
             { regex: "^(prendi) (cristallo|cristallo dati|oggetto)$", handler: (state) => {
-                const hasCrystalInRoom = state.flags.spottedCrystal && !state.inventory.includes("Cristallo Dati Opaco");
-                if (state.inventory.includes("Cristallo Dati Opaco")) {
+                const hasCrystalInRoom = state.flags.spottedCrystal && !state.flags.cristalloPreso;
+                if (state.flags.cristalloPreso) {
                     return { description: "L'hai già preso.", eventType: 'error' };
                 }
                 if (hasCrystalInRoom) {
                     state.inventory.push("Cristallo Dati Opaco");
+                    state.flags.cristalloPreso = true;
                     return { description: "OK, hai preso il Cristallo Dati Opaco.", eventType: 'item_pickup' };
                 }
                 return { description: "Non vedi nessun cristallo da prendere.", eventType: 'error' };
             }},
         ]
     },
-    "Stanza 7 WIP": {
-        description: () => "STANZA 7 - IN COSTRUZIONE\n\nIl passaggio a sud si apre su un'altra area buia. Questa parte del gioco non è ancora stata creata.\nPuoi tornare a NORD, nel corridoio principale.",
+    "Alloggi dell'Equipaggio": {
+        description: (state) => {
+            let desc = "ALLOGGI DELL'EQUIPAGGIO\n\nVarchi la soglia ed entri in un ambiente pervaso da un silenzio quasi reverenziale. La stanza è circolare, simile al ponte, ma più piccola. Le pareti sono suddivise in una serie di alcove a nido d'ape, disposte su più livelli. Non ci sono letti o arredi, solo queste nicchie lisce che emanano la stessa, debole luce bluastra del resto della nave. L'atmosfera è di una serenità quasi monastica.";
+            if (!state.flags.cilindroPreso || !state.flags.dispositivoPreso) {
+                desc += "\nIn una delle alcove più basse, riesci a scorgere una forma immobile.";
+            } else {
+                desc += "\nIn una delle alcove più basse, riposano i resti di uno degli occupanti della nave.";
+            }
+            desc += "\nL'unica uscita è a NORD.";
+            return desc;
+        },
         commands: [
-            { regex: "^((vai|va) )?(nord|n|indietro|corridoio)$", handler: (state) => {
+            // MOVIMENTO
+            { regex: "^((vai|va) )?(nord|n|corridoio|indietro)$", handler: (state) => {
                 state.location = "Corridoio Principale";
                 return { description: gameData["Corridoio Principale"].description(state), eventType: 'movement' };
             }},
+            // ESAMINA
+            { regex: "^(esamina|guarda) (alcove|nicchie|letti|pareti)$", handler: () => ({ description: "Sono celle di riposo o meditazione. Sono lisce e prive di qualsiasi oggetto personale. Sembrano più bozzoli che letti." })},
+            { regex: "^(esamina|guarda) (forma|forma immobile|resti|corpo|alieno|creatura)$", handler: (state) => {
+                let desc = "Il corpo è incredibilmente ben conservato. La creatura era alta, sottile e allungata, con arti a doppia articolazione. La pelle traslucida, simile a pergamena, è tesa su una struttura ossea delicata. Non c'è alcun segno di violenza o sofferenza. La sua posa è serena, quasi di attesa.";
+                const parts: string[] = [];
+                if (!state.flags.cilindroPreso) {
+                    parts.push("Una delle sue mani a tre dita stringe debolmente un piccolo cilindro metallico");
+                }
+                if (!state.flags.dispositivoPreso) {
+                    parts.push("accanto al corpo, appoggiato nell'alcova, c'è uno strano strumento, simile a un bisturi di cristallo");
+                }
+                if (parts.length > 0) {
+                    desc += ` ${parts.join('. ')}.`;
+                }
+                return { description: desc };
+            }},
+            // PRENDI
+            { regex: "^(prendi) (cilindro|cilindro mnemonico)$", handler: (state) => {
+                if (state.flags.cilindroPreso) {
+                    return { description: "L'hai già preso.", eventType: 'error' };
+                }
+                state.inventory.push("Cilindro Mnemonico");
+                state.flags.cilindroPreso = true;
+                return { description: "Delicatamente, apri le dita della creatura e prendi il cilindro. È freddo e liscio.", eventType: 'item_pickup' };
+            }},
+            { regex: "^(prendi) (dispositivo|strumento|dispositivo medico|bisturi|bisturi di cristallo)$", handler: (state) => {
+                 if (state.flags.dispositivoPreso) {
+                    return { description: "L'hai già preso.", eventType: 'error' };
+                }
+                state.inventory.push("Dispositivo Medico Alieno");
+                state.flags.dispositivoPreso = true;
+                return { description: "OK, hai preso il Dispositivo Medico Alieno.", eventType: 'item_pickup' };
+            }},
+            { regex: "^(prendi) (resti|corpo|alieno)$", handler: () => ({ description: "No. Mostri rispetto per i morti, chiunque essi siano." })},
+            // ANALIZZA
+            { regex: "^(analizza) (resti|corpo|alieno)$", handler: () => ({ description: "L'analisi biologica conferma che il processo di mummificazione è avvenuto in un arco di tempo lunghissimo. La causa del decesso sembra essere semplicemente la vecchiaia o un arresto metabolico volontario. Non ci sono patogeni o segni di lotta.", eventType: 'magic' })},
+            { regex: "^(analizza) (cilindro|cilindro mnemonico)$", handler: (state) => {
+                if (!state.inventory.includes("Cilindro Mnemonico")) {
+                    return { description: "Non hai un cilindro da analizzare.", eventType: 'error' };
+                }
+                if (state.flags.cilindroAnalizzato) {
+                     return { description: `Hai già analizzato il cilindro. Stato traduzione: ${state.flags.translationProgress}%.`, eventType: 'magic' };
+                }
+                state.flags.translationProgress = 18;
+                state.flags.cilindroAnalizzato = true;
+                return { description: "Inserisci il cilindro nello scanner. È un'altra registrazione. La tua matrice di traduzione si aggiorna.\nStato traduzione: 18%\nLa voce tradotta è più chiara, più personale:\n...il legame-collettivo si affievolisce. I cicli sono quasi compiuti. Il 'Grande Salto' è stato un successo, ma il nostro tempo finisce. Lasciamo questa eco... questo (parola intraducibile: 'seme-dell-anima')... perché chi verrà dopo possa conoscere il motivo. Non la fine, ma la continuazione...", eventType: 'magic' };
+            }},
+            { regex: "^(analizza) (dispositivo|dispositivo medico|strumento)$", handler: (state) => {
+                if (!state.inventory.includes("Dispositivo Medico Alieno")) {
+                    return { description: "Non hai un dispositivo da analizzare.", eventType: 'error' };
+                }
+                return { description: "Lo scanner identifica lo strumento come un dispositivo medico di precisione. La sua funzione principale era emettere impulsi energetici calibrati per interagire e stimolare tessuti biologici. È ancora carico.", eventType: 'magic' };
+            }}
         ]
     }
 };
