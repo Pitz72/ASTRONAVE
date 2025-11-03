@@ -13,7 +13,7 @@ const StartScreen: React.FC = () => {
                 Usa comandi come 'guarda', 'vai a ovest', 'prendi la tuta', 'analizza il relitto' per interagire con il mondo.
             </p>
             <p className="max-w-xl mb-8 text-green-400 leading-relaxed text-sm">
-                Usa 'salva' per salvare e 'carica' per caricare la partita.
+                Usa 'salva' e 'carica' per gestire la partita. Digita 'aiuto' per vedere altri comandi.
             </p>
             <div className="flex items-center">
                 <p className="text-2xl text-yellow-300">PREMI RETURN PER INIZIARE</p>

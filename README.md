@@ -2,7 +2,7 @@
 
 Un'avventura testuale (interactive fiction) di fantascienza con parser di comandi, ispirata ai classici giochi a riga di comando dei primi anni '80. L'intera esperienza è progettata per emulare l'estetica di un monitor a fosfori verdi di un vecchio terminale.
 
-Il gioco è alimentato da un Game Master basato su AI (Google Gemini) che interpreta i comandi del giocatore e genera dinamicamente la narrazione, gestendo lo stato del mondo e dell'inventario.
+Il gioco è costruito su un motore narrativo dedicato, progettato per garantire un'avventura coerente e ricca di mistero, dove ogni interazione è stata pensata per contribuire all'atmosfera.
 
 ## Trama
 
@@ -11,7 +11,7 @@ Un mistero fantascientifico. Sei il solitario pilota di una nave da carico che s
 ## Caratteristiche
 
 - **Estetica Retrò**: Interfaccia che simula un monitor a fosfori verdi, completa di scanlines e font pixelato.
-- **Game Master AI**: La narrazione è gestita dal modello Gemini di Google, che offre risposte dinamiche e creative.
+- **Esperienza Narrativa Curata**: Dimentica la casualità delle AI. Ogni testo, enigma e interazione è stato scritto a mano per garantire un'esperienza coerente, avvincente e fedele alla visione originale, proprio come nei classici del genere.
 - **Parser di Comandi Testuale**: Interagisci con il mondo usando comandi in linguaggio naturale (in italiano).
 - **Effetti Sonori 8-bit**: Suoni generati proceduralmente per tasti, azioni ed eventi, per aumentare l'immersione.
 - **Salvataggio e Caricamento**: Possibilità di salvare e caricare la partita in qualsiasi momento.
@@ -27,11 +27,11 @@ Apri l'applicazione e premi `RETURN` per iniziare. Inserisci i comandi nel promp
 - `prendi la tuta spaziale`: Per raccogliere un oggetto.
 - `indossa la tuta`: Per usare un oggetto su te stesso.
 - `inventario` / `i`: Per controllare gli oggetti che possiedi.
+- `aiuto`: Per visualizzare un elenco dei comandi principali.
 - `salva`: Per salvare lo stato attuale del gioco.
 - `carica`: Per caricare l'ultima partita salvata.
 
 ## Tecnologie Utilizzate
 
 - **Frontend**: React, TypeScript, Tailwind CSS
-- **AI / Motore Narrativo**: Google Gemini API
 - **Audio**: Web Audio API per la generazione di suoni procedurali

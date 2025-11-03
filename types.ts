@@ -7,12 +7,15 @@ export enum GameState {
 
 export type GameEventType = 'item_pickup' | 'item_use' | 'magic' | 'movement' | 'error' | null;
 
-export interface GeminiResponse {
-    roomTitle: string;
+export interface PlayerState {
+    location: string;
+    inventory: string[];
+    flags: { [key: string]: boolean };
+}
+
+export interface GameResponse {
     description: string;
-    locationName: string;
-    updatedInventory: string[];
-    gameOver: string | null;
-    error: string | null;
     eventType: GameEventType;
+    clearScreen?: boolean;
+    gameOver?: string | null;
 }
