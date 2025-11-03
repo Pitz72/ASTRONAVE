@@ -1,4 +1,3 @@
-
 import { PlayerState, GameResponse } from '../types';
 import { gameData } from './gameData';
 import cloneDeep from 'lodash.clonedeep';
@@ -17,31 +16,50 @@ const getHelpText = (): string => {
 - PULISCI / CLEAR (pulisce lo schermo)`;
 };
 
+const normalizeCommand = (command: string): string => {
+    return command
+        .toLowerCase()
+        .trim()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Rimuove accenti
+        .replace(/\b(il|lo|la|i|gli|le|un|uno|una|un'|l')\s+/g, '') // Rimuove articoli
+        .replace(/\s+/g, ' '); // Collassa spazi multipli
+};
+
 export const processCommand = (command: string, currentState: PlayerState): { response: GameResponse; newState: PlayerState } => {
     const newState = cloneDeep(currentState);
-    const lowerCaseCommand = command.toLowerCase().trim();
+    const normalizedCommand = normalizeCommand(command);
 
     let response: GameResponse = {
         description: "Non capisco quel comando.",
         eventType: 'error',
     };
 
-    if (lowerCaseCommand === 'inizia' || lowerCaseCommand === 'guarda' || lowerCaseCommand === 'esamina stanza') {
+    if (command.toLowerCase().trim() === 'inizia') {
         const room = gameData[newState.location];
         response = {
             description: room.description(newState),
             eventType: null,
-            clearScreen: lowerCaseCommand !== 'guarda',
+            clearScreen: true,
+        };
+        return { response, newState };
+    }
+    
+    if (normalizedCommand === 'guarda' || normalizedCommand === 'esamina stanza' || normalizedCommand === 'guardati intorno' || normalizedCommand === 'esamina') {
+        const room = gameData[newState.location];
+        response = {
+            description: room.description(newState),
+            eventType: null,
+            clearScreen: false,
         };
         return { response, newState };
     }
 
-    if (lowerCaseCommand === 'aiuto') {
+    if (normalizedCommand === 'aiuto' || normalizedCommand === 'help') {
         response = { description: getHelpText(), eventType: null };
         return { response, newState };
     }
     
-    if (lowerCaseCommand === 'inventario' || lowerCaseCommand === 'i') {
+    if (normalizedCommand === 'inventario' || normalizedCommand === 'i') {
         const inv = newState.inventory;
         const description = inv.length > 0 ? `Stai trasportando: ${inv.join(', ')}.` : "Non hai niente con te.";
         response = { description, eventType: null };
@@ -50,47 +68,31 @@ export const processCommand = (command: string, currentState: PlayerState): { re
 
     const currentRoomData = gameData[newState.location];
     if (!currentRoomData) {
-        response = { description: "ERRORE CRITICO: La stanza non esiste.", eventType: 'error' };
+        // Fallback per stanze non ancora implementate
+        if (newState.location === "Stanza 4 WIP") {
+             response = { description: "Questa parte del gioco non è ancora stata creata.", eventType: 'error' };
+        } else {
+             response = { description: "ERRORE CRITICO: La stanza non esiste.", eventType: 'error' };
+        }
         return { response, newState };
     }
-
-    // Check for movement
-    const moveMatch = lowerCaseCommand.match(/^(vai|vai a|entra|dirigiti) (.*)$/);
-    if (moveMatch) {
-        const direction = moveMatch[2].trim();
-        const exit = currentRoomData.exits[direction];
-        if (exit) {
-            if (!exit.condition || exit.condition(newState)) {
-                newState.location = exit.destination;
-                const newRoom = gameData[newState.location];
-                response = {
-                    description: newRoom.description(newState),
-                    eventType: 'movement',
-                    clearScreen: true
-                };
-            } else {
-                response = { description: exit.failMessage || "Non puoi andare in quella direzione.", eventType: 'error' };
-            }
-            return { response, newState };
-        }
-    }
-
-    // Check for room-specific commands
-    for (const regex in currentRoomData.commands) {
-        const match = lowerCaseCommand.match(new RegExp(regex, 'i'));
+    
+    // Itera sui comandi della stanza in ordine di priorità
+    for (const cmd of currentRoomData.commands) {
+        const match = normalizedCommand.match(new RegExp(cmd.regex, 'i'));
         if (match) {
-            const result = currentRoomData.commands[regex](newState, match);
+            const result = cmd.handler(newState, match);
             response = {
                 description: result.description,
                 eventType: result.eventType || null,
+                gameOver: result.gameOver || null,
             };
+            // Se la location è cambiata, imposta clearScreen
+            if (newState.location !== currentState.location) {
+                response.clearScreen = true;
+            }
             return { response, newState };
         }
-    }
-    
-    // Default response if no other command matches
-    if(moveMatch) {
-         response = { description: "Non puoi andare in quella direzione.", eventType: 'error' };
     }
     
     return { response, newState };

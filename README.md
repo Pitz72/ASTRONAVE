@@ -12,7 +12,7 @@ Un mistero fantascientifico. Sei il solitario pilota di una nave da carico che s
 
 - **Estetica Retrò**: Interfaccia che simula un monitor a fosfori verdi, completa di scanlines e font pixelato.
 - **Esperienza Narrativa Curata**: Dimentica la casualità delle AI. Ogni testo, enigma e interazione è stato scritto a mano per garantire un'esperienza coerente, avvincente e fedele alla visione originale, proprio come nei classici del genere.
-- **Parser di Comandi Testuale**: Interagisci con il mondo usando comandi in linguaggio naturale (in italiano).
+- **Parser di Comandi Migliorato**: Interagisci con il mondo usando comandi in linguaggio naturale (in italiano). Il parser gestisce comandi in modo intelligente, ignorando maiuscole/minuscole, articoli (il, la, un, ecc.) e accenti per un'esperienza più fluida.
 - **Effetti Sonori 8-bit**: Suoni generati proceduralmente per tasti, azioni ed eventi, per aumentare l'immersione.
 - **Salvataggio e Caricamento**: Possibilità di salvare e caricare la partita in qualsiasi momento.
 
