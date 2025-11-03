@@ -18,6 +18,33 @@ interface Room {
     commands: Command[];
 }
 
+const activateCrystalCommand: Command = {
+    regex: "^(usa) (dispositivo|dispositivo medico|strumento) su (cristallo|cristallo dati|cristallo dati opaco)$",
+    handler: (state: PlayerState) => {
+        const deviceIndex = state.inventory.indexOf("Dispositivo Medico Alieno");
+        const crystalIndex = state.inventory.indexOf("Cristallo Dati Opaco");
+
+        if (state.inventory.includes("Cristallo Dati Attivato")) {
+            return { description: "Il cristallo dati è già attivo.", eventType: 'error' };
+        }
+        if (deviceIndex === -1) {
+            return { description: "Non hai un dispositivo medico.", eventType: 'error' };
+        }
+        if (crystalIndex === -1) {
+            return { description: "Non hai un cristallo dati opaco da attivare.", eventType: 'error' };
+        }
+
+        state.inventory.splice(crystalIndex, 1);
+        state.inventory.push("Cristallo Dati Attivato");
+        state.flags.isCrystalAwake = true;
+
+        return {
+            description: "Con una certa esitazione, attivi il dispositivo medico. La sua punta di cristallo emette un ronzio quasi inudibile e una debole luce ambrata. Avvicini la punta al cristallo opaco che tieni nell'altra mano.\nNon appena si toccano, il cristallo dati reagisce. La sua superficie lattiginosa diventa trasparente, rivelando al suo interno una complessa matrice di filamenti luminosi che pulsano in sincrono, come un cuore che ha ripreso a battere. Ora è tiepido e vibra debolmente. Sembra... in attesa. Sembra fatto per essere inserito in qualcosa.",
+            eventType: 'magic'
+        };
+    }
+};
+
 export const gameData: { [key: string]: Room } = {
     "Plancia della Santa Maria": {
         description: () => "PLANCIA DELLA SANTA MARIA\n\nSei sulla plancia della tua nave da carico, la Santa Maria. È un ambiente familiare, vissuto, pieno di schermi e comandi che conosci a memoria. Lo spazio profondo ti circonda, punteggiato da stelle lontane. Davanti a te, nell'oblò principale, fluttua l'anomalia: un'ombra contro le stelle, un oggetto vasto e completamente buio che i tuoi sensori a lungo raggio hanno a malapena registrato. È una nave, non c'è dubbio, ma di un design che non hai mai visto. Silenziosa. Morta.\nSul pannello di controllo, una luce rossa lampeggia, indicando un allarme di prossimità.\nA OVEST c'è la porta che conduce alla stiva.",
@@ -281,8 +308,15 @@ export const gameData: { [key: string]: Room } = {
                 }
                 return { description: "La porta a sud è chiusa.", eventType: 'error' };
             }},
-            { regex: "^((vai|va) )?(ovest|o)$", handler: (state) => {
-                return { description: "La grande porta a ovest è sigillata. Non puoi aprirla.", eventType: 'error' };
+             { regex: "^((vai|va) )?(ovest|o)$", handler: (state) => {
+                if (!state.flags.isWestDoorUnlocked) {
+                    return { description: "La grande porta a ovest è sigillata. Non puoi aprirla.", eventType: 'error' };
+                }
+                state.location = "Santuario Centrale";
+                return {
+                    description: "Fai un passo avanti, e la porta di luce si richiude alle tue spalle. Sei nell'oscurità più completa e in un silenzio ancora più profondo di prima. Poi, la stanza reagisce alla tua presenza.[PAUSE]Sottili linee di luce si tracciano sul pavimento, convergendo verso il centro della stanza e illuminando un piedistallo di cristallo. Sopra di esso, le particelle di luce iniziano a coalescere, a danzare, fino a formare una figura alta e luminosa: un'immagine spettrale, un ologramma di uno degli antichi viaggiatori. Ti guarda, e anche se il suo volto è impassibile, senti un'infinita stanchezza e una profonda saggezza nei suoi occhi di luce.",
+                    eventType: 'magic'
+                };
             }},
             { regex: "^((vai|va) )?(est|e|indietro)$", handler: (state) => {
                 return { description: "La porta da cui sei entrato si è richiusa, diventando indistinguibile dal resto della parete. Non c'è via di ritorno.", eventType: 'error' };
@@ -340,11 +374,32 @@ export const gameData: { [key: string]: Room } = {
                 state.flags.isSouthDoorOpen = true;
                 return { description: "Appoggi la mano sul simbolo. Come per la porta a nord, l'incisione si illumina e il passaggio si apre silenziosamente.", eventType: 'magic' };
             }},
-            { regex: "^(apri|usa|tocca) (porta ovest|simbolo ovest|stella)$", handler: () => ({ description: "Appoggi la mano sul complesso simbolo a stella. A differenza delle altre, questa porta non reagisce. Rimane fredda, inerte e sigillata. Sembra richiedere una qualche forma di... autorizzazione o una chiave.", eventType: 'error' })},
+            { regex: "^(tocca|premi|attiva) (tre|3) (punte|punti)( del simbolo| sul simbolo|)$", handler: (state) => {
+                if (!state.flags.knowsAboutTrinarySystem) {
+                    return { description: "Non hai idea di quante punte toccare. Sembra un meccanismo complesso e non vuoi attivarlo a caso.", eventType: 'error' };
+                }
+                if (state.flags.isWestDoorUnlocked) {
+                    return { description: "L'hai già fatto. La porta è già dissolta in luce.", eventType: 'error' };
+                }
+                state.flags.isWestDoorUnlocked = true;
+                return {
+                    description: "Ricordando la mappa stellare, la culla a tre soli dei costruttori della nave, capisci. Non è una serratura, è una domanda. E tu hai la risposta.\nAppoggi la mano sul simbolo e, invece di spingere, attivi tre delle sue punte luminose in sequenza.\nPer un istante, non accade nulla. Poi, un profondo e risonante 'gong' vibra attraverso la struttura della nave. Il simbolo a stella brilla di una luce bianca e accecante.\nLentamente, la grande porta a Ovest si dissolve in particelle di luce, rivelando l'ingresso a una stanza avvolta in un'oscurità totale.",
+                    eventType: 'magic'
+                };
+            }},
+            { regex: "^(tocca|premi|attiva) (punte|punti)( del simbolo| sul simbolo|)$", handler: () => ({ description: "Quali punte? E quante?" })},
+            { regex: "^(tocca|usa) (simbolo|simbolo ovest|stella)$", handler: () => ({ description: "Il complesso simbolo a stella rimane inerte. Senti che un semplice tocco non è sufficiente. È un meccanismo, non un interruttore." })},
+            { regex: "^(apri|usa|tocca) (porta ovest)$", handler: () => ({ description: "Appoggi la mano sul complesso simbolo a stella. A differenza delle altre, questa porta non reagisce. Rimane fredda, inerte e sigillata. Sembra richiedere una qualche forma di... autorizzazione o una chiave.", eventType: 'error' })},
+            activateCrystalCommand,
         ]
     },
     "Ponte di Comando": {
-        description: () => "PONTE DI COMANDO\n\nEntri in una sala vasta e circolare, avvolta in una profonda oscurità appena scalfita dalla luce bluastra che filtra dal corridoio alle tue spalle. Il soffitto è una cupola di cristallo nero impenetrabile, dove le stelle non si vedono. Al centro della stanza, una complessa struttura a forma di stella fluttua a mezz'aria, immobile e spenta. Tutt'intorno, disposte a raggiera, ci sono diverse postazioni di controllo, anch'esse silenziose. Non ci sono sedie, ma strani incavi nel pavimento di fronte a ogni postazione.\nL'unica uscita è a SUD.",
+        description: (state) => {
+            if (state.flags.isHologramActive) {
+                return "PONTE DI COMANDO\n\nSei nel vasto Ponte di Comando circolare. L'ambiente ora non è più buio. Al centro, il proiettore olografico è attivo, e proietta sulla cupola una magnifica e silenziosa mappa stellare. L'immagine spettrale dell'alieno continua a indicare la tua casa.\nL'unica uscita è a SUD.";
+            }
+            return "PONTE DI COMANDO\n\nEntri in una sala vasta e circolare, avvolta in una profonda oscurità appena scalfita dalla luce bluastra che filtra dal corridoio alle tue spalle. Il soffitto è una cupola di cristallo nero impenetrabile, dove le stelle non si vedono. Al centro della stanza, una complessa struttura a forma di stella fluttua a mezz'aria, immobile e spenta. Tutt'intorno, disposte a raggiera, ci sono diverse postazioni di controllo, anch'esse silenziose. Non ci sono sedie, ma strani incavi nel pavimento di fronte a ogni postazione.\nL'unica uscita è a SUD.";
+        },
         commands: [
             // MOVIMENTO
             { regex: "^((vai|va) )?(sud|s|corridoio|indietro)$", handler: (state) => {
@@ -357,7 +412,7 @@ export const gameData: { [key: string]: Room } = {
                 if (!state.inventory.includes("Cristallo Dati Opaco") && !state.flags.cristalloPreso) {
                      desc += " Su una di queste, noti un piccolo oggetto cristallino appoggiato in un recesso.";
                      state.flags.spottedCrystal = true;
-                } else {
+                } else if (!state.flags.isHologramActive) {
                      desc += " Su una di queste c'è un recesso vuoto dove prima c'era un cristallo.";
                 }
                 return { description: desc };
@@ -367,18 +422,38 @@ export const gameData: { [key: string]: Room } = {
             { regex: "^(esamina|guarda) (cupola|soffitto|cristallo nero)$", handler: () => ({ description: "La cupola sopra di te è fatta di un materiale nero e traslucido. Probabilmente un tempo mostrava il panorama stellare, ma ora è solo un vuoto oscuro." }) },
             { regex: "^(esamina|guarda) (cristallo|oggetto|cristallo dati)$", handler: (state) => {
                 const hasCrystalInRoom = state.flags.spottedCrystal && !state.flags.cristalloPreso;
-                const hasCrystalInInv = state.inventory.includes("Cristallo Dati Opaco");
+                const hasCrystalInInv = state.inventory.includes("Cristallo Dati Opaco") || state.inventory.includes("Cristallo Dati Attivato");
                 if (hasCrystalInRoom || hasCrystalInInv) {
+                    if (state.inventory.includes("Cristallo Dati Attivato")) {
+                         return { description: "È un cristallo a forma di goccia, ora perfettamente trasparente. Al suo interno, una matrice di filamenti luminosi pulsa con una luce calda. Vibra debolmente nella tua mano." };
+                    }
                     return { description: "È un cristallo lattiginoso, a forma di goccia, tiepido al tatto. È opaco e non riesci a vedere al suo interno." };
                 }
                 return { description: "Quale cristallo?", eventType: 'error' };
+            }},
+            { regex: "^(esamina|guarda) (mappa|mappa stellare|proiezione|ologramma)$", handler: (state) => {
+                if (state.flags.isHologramActive) {
+                    state.flags.knowsAboutTrinarySystem = true;
+                    return { description: "Osservi di nuovo la magnifica mappa stellare. La rotta della nave è una linea debolmente tracciata attraverso il vuoto. Segui il percorso a ritroso, partendo dal tuo sistema solare. Il viaggio ti porta lontano, in un'altra galassia, fino a un ammasso stellare denso e luminoso. Il punto di origine della rotta è inequivocabile: un sistema trino, con tre soli che danzano l'uno attorno all'altro in un'orbita complessa." };
+                }
+                return { description: "Non c'è nessuna mappa da esaminare qui.", eventType: 'error' };
+            }},
+            { regex: "^(analizza) (mappa|mappa stellare|proiezione|ologramma)$", handler: (state) => {
+                if (state.flags.isHologramActive) {
+                    state.flags.knowsAboutTrinarySystem = true;
+                    return { description: "Il tuo scanner analizza i dati di navigazione. L'origine del viaggio è un sistema stellare classificato dal tuo computer come altamente anomalo: un sistema trino stabile. La quantità di energia e radiazioni emesse da tre soli dovrebbe rendere la vita impossibile, eppure tutti i dati della nave puntano a quel luogo come la loro culla. Il database lo etichetta come 'Origine'.", eventType: 'magic' };
+                }
+                return { description: "Non c'è nessuna mappa da analizzare qui.", eventType: 'error' };
             }},
             // ANALIZZA
             { regex: "^(analizza) (struttura|stella)$", handler: () => ({ description: "L'analisi conferma che si tratta di un proiettore olografico per la navigazione. È collegato ai sistemi principali della nave, ma entrambi sono in uno stato di ibernazione profonda, privi di energia.", eventType: 'magic' }) },
             { regex: "^(analizza) (cristallo|cristallo dati)$", handler: (state) => {
                 const hasCrystalInRoom = state.flags.spottedCrystal && !state.flags.cristalloPreso;
-                const hasCrystalInInv = state.inventory.includes("Cristallo Dati Opaco");
+                 const hasCrystalInInv = state.inventory.includes("Cristallo Dati Opaco") || state.inventory.includes("Cristallo Dati Attivato");
                 if (hasCrystalInRoom || hasCrystalInInv) {
+                    if (state.inventory.includes("Cristallo Dati Attivato")) {
+                        return { description: "Lo scanner conferma che il cristallo sta emettendo un segnale stabile e coerente, pronto per interfacciarsi con un sistema compatibile.", eventType: 'magic' };
+                    }
                     return { description: "Lo scanner identifica l'oggetto come un dispositivo di memorizzazione dati ad altissima densità. La sua struttura cristallina è inerte. Per leggere i dati contenuti, sembra richiedere una carica energetica specifica, quasi come un 'risveglio' bio-elettrico.", eventType: 'magic' };
                 }
                 return { description: "Non hai niente del genere da analizzare.", eventType: 'error' };
@@ -396,6 +471,29 @@ export const gameData: { [key: string]: Room } = {
                 }
                 return { description: "Non vedi nessun cristallo da prendere.", eventType: 'error' };
             }},
+            // USA
+            { regex: "^(usa|inserisci|metti) (cristallo|cristallo dati|cristallo dati attivato) (su|in|nella) (struttura|proiettore|incavo|base|stella|centro stanza)$", handler: (state) => {
+                if (state.flags.isHologramActive) {
+                    return { description: "L'hai già fatto. Il proiettore è attivo.", eventType: 'error' };
+                }
+                if (!state.inventory.includes("Cristallo Dati Attivato")) {
+                     if (state.inventory.includes("Cristallo Dati Opaco")) {
+                        return { description: "Il cristallo è inerte. Sembra che debba essere attivato in qualche modo prima di poter essere usato.", eventType: 'error' };
+                     }
+                    return { description: "Non hai un cristallo da usare.", eventType: 'error' };
+                }
+
+                const crystalIndex = state.inventory.indexOf("Cristallo Dati Attivato");
+                state.inventory.splice(crystalIndex, 1);
+                state.flags.isHologramActive = true;
+                state.flags.translationProgress = 42;
+
+                return {
+                    description: "Ti avvicini alla complessa struttura metallica che fluttua al centro della sala. Noti un piccolo incavo alla sua base, perfettamente sagomato per accogliere il cristallo pulsante. Lo inserisci.\nScatta in posizione con un 'click' quasi organico.\nImmediatamente, un'ondata di energia silenziosa attraversa la stanza. Le postazioni di controllo si illuminano debolmente. La struttura centrale si anima, i suoi anelli iniziano a ruotare lentamente. Un fascio di luce si proietta verso la cupola nera, che ora non è più buia, ma mostra una mappa stellare tridimensionale di una porzione sconosciuta della galassia.\nAl centro della mappa, appare l'immagine tremolante di una delle creature aliene, identica a quella che hai visto negli alloggi. Il suo volto è sereno, saggio. La figura alza una mano e indica un punto preciso della mappa: un piccolo, insignificante sistema solare giallo in una zona remota. Il tuo sistema solare.\nNel frattempo, il tuo scanner emette un segnale. Ha intercettato un'enorme quantità di dati dalla proiezione.\nStato traduzione: 42%",
+                    eventType: 'magic'
+                };
+            }},
+            activateCrystalCommand,
         ]
     },
     "Alloggi dell'Equipaggio": {
@@ -427,7 +525,7 @@ export const gameData: { [key: string]: Room } = {
                     parts.push("accanto al corpo, appoggiato nell'alcova, c'è uno strano strumento, simile a un bisturi di cristallo");
                 }
                 if (parts.length > 0) {
-                    desc += ` ${parts.join('. ')}.`;
+                    desc += ` ${parts.join('. E ')}.`;
                 }
                 return { description: desc };
             }},
@@ -467,7 +565,33 @@ export const gameData: { [key: string]: Room } = {
                     return { description: "Non hai un dispositivo da analizzare.", eventType: 'error' };
                 }
                 return { description: "Lo scanner identifica lo strumento come un dispositivo medico di precisione. La sua funzione principale era emettere impulsi energetici calibrati per interagire e stimolare tessuti biologici. È ancora carico.", eventType: 'magic' };
-            }}
+            }},
+            activateCrystalCommand,
+        ]
+    },
+    "Santuario Centrale": {
+        description: (state) => "Sei nel Santuario Centrale. Di fronte a te, fluttua la figura luminosa dell'Anziano, un ricordo olografico che attende in silenzio. Le linee di luce sul pavimento proiettano ombre lunghe e solenni. È un luogo di profonda quiete e importanza cosmica. L'aria stessa vibra di un'energia antica. Non ci sono uscite visibili.",
+        commands: [
+            { regex: "^(parla|parla con anziano|parla con ologramma)$", handler: (state) => {
+                state.flags.hasHeardMonologue = true;
+                return {
+                    description: "(La figura non muove le labbra, ma le parole risuonano direttamente nella tua mente, tradotte istantaneamente dal tuo scanner potenziato)\n\n\"Creatura di carbonio... Figlio delle Stelle... Benvenuto. Non temere. Io non sono qui. Questa non è una trasmissione, ma un ricordo. L'ultimo monumento della nostra esistenza.\"\n\n\"Comprendo la tua curiosità. Hai viaggiato lontano per arrivare qui, proprio come facemmo noi. Il nostro tempo stava finendo. Il nostro universo si stava spegnendo. Ma la vita... la vita è troppo preziosa per svanire con esso.\"\n\n\"Così intraprendemmo il 'Grande Salto', un ultimo, disperato atto di creazione. Abbiamo attraversato il buio tra le galassie non per conquistare, ma per seminare. Abbiamo codificato il potenziale della vita, il nostro stesso schema, e lo abbiamo donato alle stelle nascenti, ai mondi giovani... come il tuo.\"\n\n\"Noi siamo i vostri antenati. Ma non siamo i vostri dèi. Siamo solo un ricordo. La nostra storia finisce qui... perché la vostra potesse iniziare.\"\n\n(L'ologramma fa un cenno del capo, un gesto di infinito rispetto)\n\n\"Il nostro dovere è compiuto. Ora va', e vivi. Questo è tutto ciò che abbiamo sempre desiderato.\"",
+                    eventType: 'magic',
+                    gameOver: "La figura di luce si dissolve, e con essa la stanza. Per un istante, sei sospeso nel vuoto, nel silenzio assoluto. Poi, un battito di ciglia, e sei di nuovo sulla plancia della Santa Maria. Tutto è come l'hai lasciato. L'allarme di prossimità è spento. Fuori dall'oblò, il relitto alieno è svanito, come se non fosse mai esistito. Sei solo, di nuovo. Ma non del tutto. Sul pannello di controllo, dove prima c'era una luce rossa lampeggiante, ora c'è un piccolo oggetto, simile a un seme fossilizzato, che pulsa di una debole e calda luce. Un ricordo. Una promessa."
+                };
+            }},
+            { regex: "^(esamina|guarda) (anziano|ologramma|figura)$", handler: (state) => {
+                if (state.flags.hasHeardMonologue) {
+                    return { description: "Non c'è più nulla qui. Solo il silenzio e l'oscurità.", eventType: 'error' };
+                }
+                return { description: "È una proiezione tridimensionale di uno degli alieni, ma sembra più vecchio, più saggio di quello che hai visto negli alloggi. Indossa vesti cerimoniali e la sua espressione è di una calma profonda. Non sembra minaccioso, solo... in attesa." };
+            }},
+            { regex: "^(esamina|guarda) (stanza|santuario|luci|pavimento)$", handler: (state) => {
+                if (state.flags.hasHeardMonologue) {
+                    return { description: "La stanza è tornata nell'oscurità totale.", eventType: 'error' };
+                }
+                return { description: "È una stanza vasta e vuota, priva di qualsiasi arredo se non il piedistallo centrale. Le linee di luce sul pavimento formano un complesso diagramma che ricorda una mappa galattica." };
+            }},
         ]
     }
 };
