@@ -1,8 +1,12 @@
 # IL RELITTO SILENTE
 
+**Versione 0.3.0 - Design Completo**
+
 Un'avventura testuale (interactive fiction) di fantascienza con parser di comandi, ispirata ai classici giochi a riga di comando dei primi anni '80. L'intera esperienza è progettata per emulare l'estetica di un monitor a fosfori verdi di un vecchio terminale.
 
 Il gioco è costruito su un motore narrativo dedicato, progettato per garantire un'avventura coerente e ricca di mistero, dove ogni interazione è stata pensata per contribuire all'atmosfera.
+
+Con la versione 0.3.0, la progettazione e l'implementazione narrativa del gioco sono da considerarsi complete. Il progetto entra ora in una fase di test approfonditi e di rifinitura finale. L'esperimento di creare un'avventura testuale da zero, senza l'ausilio di framework specifici, è giunto al suo compimento funzionale.
 
 ## Trama
 

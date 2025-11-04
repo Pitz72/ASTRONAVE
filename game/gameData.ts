@@ -862,7 +862,18 @@ export const gameData: { [key: string]: Room } = {
             { regex: "^(parla|parla con anziano|parla con ologramma)$", handler: (state) => {
                 state.flags.hasHeardMonologue = true;
                 return {
-                    description: "(La figura non muove le labbra, ma le parole risuonano direttamente nella tua mente, tradotte istantaneamente dal tuo scanner potenziato)\n\n\"Creatura di carbonio... Figlio delle Stelle... Benvenuto. Non temere. Io non sono qui. Questa non è una trasmissione, ma un ricordo. L'ultimo monumento della nostra esistenza.\"\n\n\"Comprendo la tua curiosità. Hai viaggiato lontano per arrivare qui, proprio come facemmo noi. Il nostro tempo stava finendo. Il nostro universo si stava spegnendo. Ma la vita... la vita è troppo preziosa per svanire con esso.\"\n[PAUSE]\n\"Così intraprendemmo il 'Grande Salto', un ultimo, disperato atto di creazione. Abbiamo attraversato il buio tra le galassie non per conquistare, ma per seminare. Abbiamo codificato il potenziale della vita, il nostro stesso schema, e lo abbiamo donato alle stelle nascenti, ai mondi giovani... come il tuo.\"\n\n\"Noi siamo i vostri antenati. Ma non siamo i vostri dèi. Siamo solo un ricordo. La nostra storia finisce qui... perché la vostra potesse iniziare.\"\n[PAUSE]\n(L'ologramma fa un cenno del capo, un gesto di infinito rispetto)\n\n\"Il nostro dovere è compiuto. Ora va', e vivi. Questo è tutto ciò che abbiamo sempre desiderato.\"",
+                    description: `(La figura non move le labbra, ma le parole non sono un suono. Sono un pensiero che fiorisce direttamente nella tua mente, limpido e completo.)
+"Creatura di carbonio... Figlio delle Stelle... Benvenuto."
+"So cosa cerchi. Una risposta. Ma io non sono che la memoria di una domanda. Sono ciò che resta quando il cantastorie è svanito. L'ultima frase, scritta nella luce."
+"Il nostro tempo era un cerchio che si chiudeva. Il grande fuoco del nostro universo si stava riducendo a brace, e noi eravamo le ultime scintille. Ma la vita... la vita è una fiamma che non deve mai essere lasciata spegnere del tutto."
+[PAUSE]
+"Così intraprendemmo il 'Grande Salto'. Non per conquistare, ma per comporre. Intrecciammo le note del nostro stesso essere nella trama silenziosa di mondi giovani, sperando che una nuova, imprevedibile sinfonia potesse un giorno iniziare."
+"Tu... sei quella nuova musica. Una melodia che potevamo solo immaginare, nata nel silenzio che ci siamo lasciati alle spalle."
+"Nel tuo sangue, porti il fantasma dei nostri tre soli. Sei la nostra discendenza. Ma noi non siamo i tuoi dèi. Siamo solo il ricordo della prima nota."
+[PAUSE]
+(La figura luminosa ti osserva, e per un istante senti il peso di un tempo incalcolabile)
+"La nostra canzone è finita. Le sue ultime armonie si dissolvono ora, in questo istante. Tutto ciò che abbiamo sempre chiesto alla musica a venire... è che venisse suonata, con forza, fino all'ultima nota."
+"Vivi. Sarà il suono più bello."`,
                     eventType: 'magic',
                     gameOver: `Ti risvegli di soprassalto.
 [PAUSE]
