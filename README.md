@@ -21,7 +21,7 @@ L'avventura si dipana in più atti. Prima dovrai trovare un modo per entrare nel
 - **Parser di Comandi Migliorato**: Interagisci con il mondo usando comandi in linguaggio naturale (in italiano). Il parser gestisce comandi in modo intelligente, ignorando maiuscole/minuscole, articoli (il, la, un, ecc.) e accenti per un'esperienza più fluida.
 - **Narrazione a Ritmo Controllato**: I testi più lunghi vengono presentati in segmenti, attendendo l'input del giocatore per continuare. Questo migliora la leggibilità e permette di assorbire la storia al proprio ritmo.
 - **Meccanica di Traduzione**: Trova frammenti di dati alieni e usa il tuo scanner per costruire una matrice di traduzione, svelando lentamente la storia e lo scopo del relitto.
-- **Enigmi Logici e basati sulla Conoscenza**: Risolvi enigmi ambientali e a più fasi usando l'osservazione, gli oggetti a tua disposizione e la conoscenza che hai acquisito esplorando e decifrando la storia del relitto.
+- **Enigmi Logici e basati sulla Conoscenza**: Risolvi enigmi ambientali e a più fasi usando l'osservazione, gli oggetti a tua disposizione e la conoscenza che hai acquisito esplorando e decifrando la storia del relitto. Alcuni enigmi richiedono di collegare indizi e oggetti trovati in stanze diverse.
 - **Esplorazione Non Lineare**: Avanza nell'avventura scegliendo il tuo percorso all'interno dell'enigmatico relitto alieno.
 - **Effetti Sonori 8-bit**: Suoni generati proceduralmente per tasti, azioni ed eventi, per aumentare l'immersione.
 - **Salvataggio e Caricamento**: Possibilità di salvare e caricare la partita in qualsiasi momento.
