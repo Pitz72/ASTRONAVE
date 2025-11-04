@@ -368,7 +368,7 @@ export const gameData: { [key: string]: Room } = {
     },
     "Serra Morente": {
         description: (state) => {
-            let desc = "SERRA MORENTE\n\nSei in una vasta serra a cupola. Enormi piante aliene, simili a felci scheletriche e funghi contorti, pendono dalle pareti come spettri. Tutto è secco, morto, coperto da uno strato di polvere che sembra neve grigia.";
+            let desc = "SERRA MORENTE\n\nApri la porta a sud e un'aria innaturalmente secca ti investe. La luce bluastra del corridoio lascia il posto a una debole luminescenza verdastra, malata. Sei in una vasta serra a cupola. Enormi piante aliene, simili a felci scheletriche e funghi contorti, pendono dalle pareti come spettri. Tutto è secco, morto, coperto da uno strato di polvere che sembra neve grigia.";
             if (state.flags.semeLiberato) {
                 desc += "\nIl silenzio ora è totale, dopo che il ronzio del campo di contenimento è cessato.";
             } else {
@@ -381,7 +381,7 @@ export const gameData: { [key: string]: Room } = {
                 desc += "\nAl centro della sala, i resti del contenitore del seme giacciono inattivi.";
             }
             
-            desc += "\nL'unica uscita è a NORD.";
+            desc += "\nMentre osservi la stanza, noti che dietro un ammasso di funghi cristallizzati sulla parete OVEST, una sezione del muro sembra diversa, più scura, come se fosse un passaggio.\nL'unica altra uscita è a NORD, da dove sei entrato.";
             return desc;
         },
         commands: [
@@ -389,10 +389,17 @@ export const gameData: { [key: string]: Room } = {
                 state.location = "Corridoio Principale";
                 return { description: gameData["Corridoio Principale"].description(state), eventType: 'movement' };
             }},
+            { regex: "^((vai|va) )?(ovest|o|passaggio)$", handler: (state) => {
+                state.location = "Arca Biologica";
+                return { description: gameData["Arca Biologica"].description(state), eventType: 'movement' };
+            }},
             // ESAMINA
             { regex: "^(esamina|guarda) (piante|felci|funghi)$", handler: (state) => {
-                state.flags.spottedTavoletta = true;
-                return { description: "Sono i resti secchi di una flora aliena un tempo rigogliosa. Toccandone una, si sbriciola in polvere fine. La polvere ti solletica la gola anche attraverso i filtri della tuta. Nascosta tra i resti di un grosso arbusto vicino alla parete est, noti una piccola tavoletta di pietra." };
+                 if (!state.flags.spottedTavoletta && !state.flags.tavolettaPresa) {
+                    state.flags.spottedTavoletta = true;
+                    return { description: "Sono i resti secchi di una flora aliena un tempo rigogliosa. Toccandone una, si sbriciola in polvere fine. La polvere ti solletica la gola anche attraverso i filtri della tuta. Nascosta tra i resti di un grosso arbusto vicino alla parete est, noti una piccola tavoletta di pietra." };
+                }
+                return { description: "Sono i resti secchi di una flora aliena un tempo rigogliosa. Toccandone una, si sbriciola in polvere fine." };
             }},
             { regex: "^(esamina|guarda) (teca|cristallo|centro)$", handler: (state) => {
                 if (state.flags.semeLiberato) {
@@ -407,6 +414,7 @@ export const gameData: { [key: string]: Room } = {
                 }
                 return { description: "Non vedi nessuna tavoletta.", eventType: 'error' };
             }},
+            { regex: "^(esamina|guarda) (passaggio|muro ovest)$", handler: () => ({ description: "È un'apertura non contrassegnata, quasi nascosta dalla vegetazione morta. Conduce in un'area ancora più buia e fredda." }) },
             // ANALIZZA
             { regex: "^(analizza) (stanza|aria|serra)$", handler: () => ({ description: "Lo scanner rileva un'alta concentrazione di spore organiche inerti nell'aria. Il ronzio a bassa frequenza proviene da un campo di contenimento energetico malfunzionante che circonda la stanza. È instabile, ma non rappresenta un pericolo immediato.", eventType: 'magic'})},
             { regex: "^(analizza) (teca)$", handler: (state) => {
@@ -448,6 +456,29 @@ export const gameData: { [key: string]: Room } = {
                 state.flags.semeLiberato = true;
                 return { description: "Inserisci la tavoletta nell'incavo del pannello. Si adatta perfettamente. I simboli sulla tavoletta si illuminano in sequenza, e il pannello emette un 'clic' armonioso.[PAUSE]La teca di cristallo si dissolve in un pulviscolo di luce, lasciando il Seme Vivente fluttuare a mezz'aria davanti a te. Lo prendi con delicatezza. È caldo al tatto e pulsa debolmente nel tuo guanto.[PAUSE]Non appena prendi il seme, il fastidioso ronzio nella stanza cessa. Il silenzio torna a regnare, ora più profondo di prima.", eventType: 'magic' };
             }},
+        ]
+    },
+     "Arca Biologica": {
+        description: (state) => "ARCA BIOLOGICA\n\nTi fai strada oltre la vegetazione morta e varchi la soglia. L'aria diventa immediatamente gelida, pungente. Sei in una sala di dimensioni colossali, così vasta che le pareti lontane si perdono nell'oscurità. L'architettura è austera, funzionale. File e file di capsule di stasi criogenica, simili a sarcofagi di vetro scuro, si estendono a perdita d'occhio in corridoi ordinati. Sono centinaia, forse migliaia. Un sottile strato di brina ricopre ogni superficie, e il tuo respiro si condensa all'interno del casco.\nIl silenzio qui è diverso. È il silenzio pesante e definitivo di un cimitero.\nL'unica uscita è a EST, verso la serra.",
+        commands: [
+            // MOVIMENTO
+            { regex: "^((vai|va) )?(est|e|serra|indietro)$", handler: (state) => {
+                state.location = "Serra Morente";
+                return { description: gameData["Serra Morente"].description(state), eventType: 'movement' };
+            }},
+            { regex: "^((vai|va) )?(nord|sud|ovest|n|s|o)$", handler: () => ({ description: "Cammini per un po' lungo i corridoi silenziosi di questo cimitero galattico, ma il panorama non cambia. File infinite di tombe di vetro. Con un brivido, decidi di tornare indietro." }) },
+            // ESAMINA
+            { regex: "^(esamina|guarda) (capsule|sarcofagi|contenitori)$", handler: () => ({ description: "Sono capsule di stasi criogenica. La loro superficie di vetro scuro è gelida al tatto. Attraverso il materiale opaco non riesci a distinguere cosa ci sia all'interno. Ce ne sono troppe per contarle." }) },
+            { regex: "^(esamina|guarda) (brina|ghiaccio|pavimento)$", handler: () => ({ description: "È uno strato sottile di cristalli di ghiaccio. L'ambiente è ben al di sotto dello zero." }) },
+            // ANALIZZA
+            { regex: "^(analizza) (stanza|aria|arca)$", handler: () => ({ description: "Lo scanner conferma una temperatura ambientale di -120 gradi Celsius. I sistemi criogenici principali sono offline. La temperatura si sta lentamente, inesorabilmente, alzando nel corso dei millenni. Non c'è traccia di energia attiva, se non nei sistemi di monitoraggio passivo.", eventType: 'magic'})},
+            { regex: "^(analizza) (capsule|capsula)$", handler: (state) => {
+                state.flags.knowsAboutBioFailure = true;
+                return { description: "Punti lo scanner verso la capsula più vicina. L'apparecchio emette un 'bip' lento e malinconico.[PAUSE]LETTURA CAMPIONE: [SPECIE K'THARR - PREDATORE ALFA]\nSTATO: deceduto. Integrità genomica: 0.02%.\nCAUSA: guasto catastrofico dei sistemi di supporto vitale nel ciclo 9.875.342.[PAUSE]Provi con un'altra capsula. E un'altra ancora. La risposta è sempre la stessa, una litania di fallimenti.\n[FLORA DI XYLOS - SIMBIONTE]... deceduto.\n[FORMA DI VITA SILICEA - COSTRUTTORE]... deceduto.[PAUSE]Capisci la terribile verità. Questa non era una stiva. Era un'arca. Un intero ecosistema, forse di un intero mondo, conservato qui. E ora è tutto perduto.", eventType: 'magic'};
+            }},
+            // USA / APRI
+            { regex: "^(apri) (capsula|capsule)$", handler: () => ({ description: "Le capsule sono sigillate ermeticamente e i meccanismi di apertura sono privi di energia. Anche se potessi, senti che sarebbe una profanazione." })},
+            { regex: "^(usa) (taglierina|taglierina al plasma) su (capsula|capsule)$", handler: () => ({ description: "Anche se la taglierina potesse incidere il vetro criogenico, non servirebbe a nulla. Non c'è nessuno da salvare qui. Abbassi l'attrezzo." })},
         ]
     },
     "Ponte di Comando": {
