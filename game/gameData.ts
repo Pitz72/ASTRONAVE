@@ -378,23 +378,27 @@ export const gameData: { [key: string]: Room } = {
                     let itemKey = '';
                     let flagKey = '';
                     let itemName = '';
+                    let responseText = '';
 
                     if (itemUsed.includes('seme')) {
                         itemKey = "Seme Vivente";
                         flagKey = "seedPlaced";
                         itemName = "il Seme Vivente";
+                        responseText = "Avvicini il Seme Vivente all'incavo a forma di seme. Viene attratto da una forza invisibile e si incastra con un 'clic' delicato. Una debole linea di luce verde smeraldo si traccia lungo il bordo della porta, pulsando lentamente.";
                     } else if (itemUsed.includes('stele')) {
                         itemKey = "Stele del Ricordo";
                         flagKey = "stelePlaced";
                         itemName = "la Stele del Ricordo";
+                        responseText = "Inserisci la Stele del Ricordo nell'incavo rettangolare. Si adatta perfettamente. Una linea di luce bianca e pura si aggiunge alle altre, emanando un'aura solenne.";
                     } else if (itemUsed.includes('nucleo')) {
                         itemKey = "Nucleo di Memoria";
                         flagKey = "corePlaced";
                         itemName = "il Nucleo di Memoria";
+                        responseText = "Posizioni il Nucleo di Memoria nell'incavo poliedrico. Una linea di luce ambrata si unisce alle altre, completando il circuito. Un ronzio profondo e armonico riempie il corridoio.";
                     }
 
                     if (!itemKey) {
-                         return { description: `Non capisco cosa vuoi usare.`, eventType: 'error' };
+                        return { description: `Non capisco cosa vuoi usare.`, eventType: 'error' };
                     }
 
                     if (!state.inventory.includes(itemKey)) {
@@ -411,20 +415,18 @@ export const gameData: { [key: string]: Room } = {
                         state.inventory.splice(itemIndex, 1);
                     }
                     
-                    let placedCount = 0;
-                    if (state.flags.seedPlaced) placedCount++;
-                    if (state.flags.stelePlaced) placedCount++;
-                    if (state.flags.corePlaced) placedCount++;
+                    const allPlaced = state.flags.seedPlaced && state.flags.stelePlaced && state.flags.corePlaced;
 
-                    if (placedCount === 3) {
+                    if (allPlaced) {
                         state.flags.isWestDoorUnlocked = true;
+                        responseText += "[PAUSE]Le tre luci - verde, bianca e ambrata - pulsano all'unisono, la loro frequenza aumenta rapidamente. Il ronzio si trasforma in un 'gong' risonante che vibra attraverso la struttura stessa della nave.[PAUSE]Il complesso simbolo a stella al centro della porta brilla di una luce accecante.[PAUSE]Lentamente, la grande porta a Ovest non si apre. Si dissolve in particelle di luce, come stelle che tornano al cielo, rivelando l'ingresso a una sala avvolta in un'oscurità familiare: il Ponte di Comando.";
                         return {
-                            description: `Posizioni ${itemName} nell'ultimo incavo vuoto. Si adatta perfettamente. Uno dopo l'altro, i tre artefatti si illuminano di una luce gentile. Un profondo ronzio risuona dalla porta, e il complesso simbolo a stella al suo centro si illumina. Con un sibilo quasi impercettibile, la grande porta si ritrae silenziosamente nella parete, rivelando il passaggio verso il cuore della nave.`,
+                            description: responseText,
                             eventType: 'magic'
                         };
                     } else {
                         return {
-                            description: `Posizioni ${itemName} nell'incavo corrispondente. Si illumina brevemente e poi si spegne. La porta rimane sigillata. Mancano ancora ${3 - placedCount} artefatti.`,
+                            description: responseText,
                             eventType: 'item_use'
                         };
                     }
