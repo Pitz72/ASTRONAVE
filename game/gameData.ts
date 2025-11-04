@@ -720,106 +720,67 @@ export const gameData: { [key: string]: Room } = {
     },
     "Ponte di Comando": {
         description: (state) => {
+            let desc = "PONTE DI COMANDO\n\nEntri in una sala vasta e circolare, avvolta in una profonda oscurità e in un silenzio tombale. Il soffitto è una cupola di cristallo nero impenetrabile. Al centro della stanza, una complessa struttura a forma di stella fluttua a mezz'aria, immobile e spenta. Tutt'intorno, disposte a raggiera, ci sono diverse postazioni di controllo, anch'esse silenziose.";
+            
             if (state.flags.isHologramActive) {
-                return "PONTE DI COMANDO\n\nSei nel vasto Ponte di Comando circolare. L'ambiente ora non è più buio. Al centro, il proiettore olografico è attivo, e proietta sulla cupola una magnifica e silenziosa mappa stellare. L'immagine spettrale dell'alieno continua a indicare la tua casa.\nL'unica uscita è a SUD.";
+                desc = "PONTE DI COMANDO\n\nSei nel vasto Ponte di Comando circolare. L'ambiente ora non è più buio. Al centro, la struttura si è animata e proietta sulla cupola una magnifica e silenziosa mappa stellare tridimensionale. La mappa mostra una rotta chiara che attraversa il vuoto interstellare, con un punto di arrivo inconfondibile: il tuo sistema solare.";
             }
-            return "PONTE DI COMANDO\n\nEntri in una sala vasta e circolare, avvolta in una profonda oscurità appena scalfita dalla luce bluastra che filtra dal corridoio alle tue spalle. Il soffitto è una cupola di cristallo nero impenetrabile, dove le stelle non si vedono. Al centro della stanza, una complessa struttura a forma di stella fluttua a mezz'aria, immobile e spenta. Tutt'intorno, disposte a raggiera, ci sono diverse postazioni di controllo, anch'esse silenziose. Non ci sono sedie, ma strani incavi nel pavimento di fronte a ogni postazione.\nL'unica uscita è a SUD.";
+    
+            desc += "\nUn'unica postazione, più grande delle altre, si trova direttamente di fronte a te. Sembra la postazione del comandante.";
+            desc += "\nUna sottile porta circolare, quasi invisibile, è incassata nella parete dietro la postazione del comandante. È l'unica altra uscita oltre a quella da cui sei entrato a SUD.";
+            
+            return desc;
         },
         commands: [
-            // MOVIMENTO
+             // MOVIMENTO
             { regex: "^((vai|va) )?(sud|s|corridoio|indietro)$", handler: (state) => {
                 state.location = "Corridoio Principale";
                 return { description: gameData["Corridoio Principale"].description(state), eventType: 'movement' };
             }},
+            { regex: "^(vai|entra)( nella| dentro)? porta( circolare)?$", handler: (state) => {
+                if (state.flags.isFinalDoorOpen) {
+                    state.location = "Santuario Centrale";
+                    return { description: gameData["Santuario Centrale"].description(state), eventType: 'movement' };
+                }
+                return { description: "La porta circolare è bloccata.", eventType: 'error' };
+            }},
             // ESAMINA
-            { regex: "^(esamina|guarda) (postazioni|controlli|console)$", handler: (state) => {
-                let desc = "Sono postazioni di controllo lisce e prive di comandi fisici. La loro superficie è scura e fredda. Sembrano progettate per essere usate da creature con una fisionomia molto diversa dalla tua.";
-                if (!state.inventory.includes("Cristallo Dati Opaco") && !state.flags.cristalloPreso) {
-                     desc += " Su una di queste, noti un piccolo oggetto cristallino appoggiato in un recesso.";
-                     state.flags.spottedCrystal = true;
-                } else if (!state.flags.isHologramActive) {
-                     desc += " Su una di queste c'è un recesso vuoto dove prima c'era un cristallo.";
+            { regex: "^(esamina|guarda) (postazione|postazione comandante|postazione principale|console)$", handler: () => ({ description: "È più grande delle altre. La sua superficie liscia e scura sembra attendere un input. C'è un'unica depressione a forma di mano al centro della console." }) },
+            { regex: "^(esamina|guarda) (porta|porta circolare)$", handler: (state) => {
+                if (state.flags.isHologramActive) {
+                    return { description: "Ora che la stanza è illuminata, puoi vedere meglio il meccanismo di blocco. È un piccolo pannello con diverse punte luminose retrattili." };
                 }
-                return { description: desc };
+                return { description: "È una porta perfettamente circolare, senza maniglie o simboli visibili, tranne per un piccolo meccanismo di blocco al centro. Sembra condurre al cuore della nave." };
             }},
-            { regex: "^(esamina|guarda) (incavi|sedie|pavimento)$", handler: () => ({ description: "Questi incavi ergonomici nel pavimento non sono sedie, ma piuttosto supporti. Forse gli occupanti di questa nave non si 'sedevano' nel senso umano del termine." }) },
             { regex: "^(esamina|guarda) (struttura|stella|centro stanza)$", handler: () => ({ description: "È una scultura metallica complessa, formata da anelli e punte interconnessi. Sembra un proiettore olografico di incredibile complessità, ma è completamente inerte." }) },
-            { regex: "^(esamina|guarda) (cupola|soffitto|cristallo nero)$", handler: () => ({ description: "La cupola sopra di te è fatta di un materiale nero e traslucido. Probabilmente un tempo mostrava il panorama stellare, ma ora è solo un vuoto oscuro." }) },
-            { regex: "^(esamina|guarda) (cristallo|oggetto|cristallo dati)$", handler: (state) => {
-                const hasCrystalInRoom = state.flags.spottedCrystal && !state.flags.cristalloPreso;
-                const hasCrystalInInv = state.inventory.includes("Cristallo Dati Opaco") || state.inventory.includes("Cristallo Dati Attivato");
-                if (hasCrystalInRoom || hasCrystalInInv) {
-                    if (state.inventory.includes("Cristallo Dati Attivato")) {
-                         return { description: "È un cristallo a forma di goccia, ora perfettamente trasparente. Al suo interno, una matrice di filamenti luminosi pulsa con una luce calda. Vibra debolmente nella tua mano." };
-                    }
-                    return { description: "È un cristallo lattiginoso, a forma di goccia, tiepido al tatto. È opaco e non riesci a vedere al suo interno." };
+            { regex: "^(esamina|guarda) (mappa|mappa stellare)$", handler: (state) => {
+                if (!state.flags.isHologramActive) {
+                    return { description: "Non c'è nessuna mappa da esaminare.", eventType: 'error' };
                 }
-                return { description: "Quale cristallo?", eventType: 'error' };
-            }},
-            { regex: "^(esamina|guarda) (mappa|mappa stellare|proiezione|ologramma)$", handler: (state) => {
-                if (state.flags.isHologramActive) {
-                    state.flags.knowsAboutTrinarySystem = true;
-                    return { description: "Osservi di nuovo la magnifica mappa stellare. La rotta della nave è una linea debolmente tracciata attraverso il vuoto. Segui il percorso a ritroso, partendo dal tuo sistema solare. Il viaggio ti porta lontano, in un'altra galassia, fino a un ammasso stellare denso e luminoso. Il punto di origine della rotta è inequivocabile: un sistema trino, con tre soli che danzano l'uno attorno all'altro in un'orbita complessa." };
-                }
-                return { description: "Non c'è nessuna mappa da esaminare qui.", eventType: 'error' };
-            }},
-            { regex: "^(analizza) (mappa|mappa stellare|proiezione|ologramma)$", handler: (state) => {
-                if (state.flags.isHologramActive) {
-                    state.flags.knowsAboutTrinarySystem = true;
-                    return { description: "Il tuo scanner analizza i dati di navigazione. L'origine del viaggio è un sistema stellare classificato dal tuo computer come altamente anomalo: un sistema trino stabile. La quantità di energia e radiazioni emesse da tre soli dovrebbe rendere la vita impossibile, eppure tutti i dati della nave puntano a quel luogo come la loro culla. Il database lo etichetta come 'Origine'.", eventType: 'magic' };
-                }
-                return { description: "Non c'è nessuna mappa da analizzare qui.", eventType: 'error' };
+                state.flags.knowsAboutTrinarySystem = true;
+                return { description: "Segui la rotta a ritroso, partendo da casa. Il viaggio ti porta in un'altra galassia, fino a un ammasso stellare denso e luminoso. Il punto di origine è inequivocabile: un sistema trino, con tre soli che danzano l'uno attorno all'altro. La culla della loro civiltà." };
             }},
             // ANALIZZA
-            { regex: "^(analizza) (struttura|stella)$", handler: () => ({ description: "L'analisi conferma che si tratta di un proiettore olografico per la navigazione. È collegato ai sistemi principali della nave, ma entrambi sono in uno stato di ibernazione profonda, privi di energia.", eventType: 'magic' }) },
-            { regex: "^(analizza) (cristallo|cristallo dati)$", handler: (state) => {
-                const hasCrystalInRoom = state.flags.spottedCrystal && !state.flags.cristalloPreso;
-                 const hasCrystalInInv = state.inventory.includes("Cristallo Dati Opaco") || state.inventory.includes("Cristallo Dati Attivato");
-                if (hasCrystalInRoom || hasCrystalInInv) {
-                    if (state.inventory.includes("Cristallo Dati Attivato")) {
-                        return { description: "Lo scanner conferma che il cristallo sta emettendo un segnale stabile e coerente, pronto per interfacciarsi con un sistema compatibile.", eventType: 'magic' };
-                    }
-                    return { description: "Lo scanner identifica l'oggetto come un dispositivo di memorizzazione dati ad altissima densità. La sua struttura cristallina è inerte. Per leggere i dati contenuti, sembra richiedere una carica energetica specifica, quasi come un 'risveglio' bio-elettrico.", eventType: 'magic' };
+            { regex: "^(analizza) (stanza|ponte)$", handler: () => ({ description: "Lo scanner rileva che l'intera stanza è in uno stato di ibernazione a energia quasi zero. Tutti i sistemi sono pronti, ma dormienti. Aspettano un segnale di riattivazione, un 'imprimatur'." , eventType: 'magic'}) },
+            { regex: "^(analizza) (postazione|postazione comandante|console)$", handler: () => ({ description: "L'analisi conferma che questa è la console di comando principale. La depressione a forma di mano è un'interfaccia bio-metrica. Sembra essere il catalizzatore per risvegliare i sistemi del ponte.", eventType: 'magic' }) },
+            // USA / TOCCA
+            { regex: "^(tocca|usa|premi) (console|postazione|depressione|mano)$", handler: (state) => {
+                 if (state.flags.isHologramActive) {
+                    return { description: "Hai già attivato la console. La mappa stellare brilla sopra di te.", eventType: 'error' };
                 }
-                return { description: "Non hai niente del genere da analizzare.", eventType: 'error' };
-            }},
-            // PRENDI
-            { regex: "^(prendi) (cristallo|cristallo dati|oggetto)$", handler: (state) => {
-                const hasCrystalInRoom = state.flags.spottedCrystal && !state.flags.cristalloPreso;
-                if (state.flags.cristalloPreso) {
-                    return { description: "L'hai già preso.", eventType: 'error' };
-                }
-                if (hasCrystalInRoom) {
-                    state.inventory.push("Cristallo Dati Opaco");
-                    state.flags.cristalloPreso = true;
-                    return { description: "OK, hai preso il Cristallo Dati Opaco.", eventType: 'item_pickup' };
-                }
-                return { description: "Non vedi nessun cristallo da prendere.", eventType: 'error' };
-            }},
-            // USA
-            { regex: "^(usa|inserisci|metti) (cristallo|cristallo dati|cristallo dati attivato) (su|in|nella) (struttura|proiettore|incavo|base|stella|centro stanza)$", handler: (state) => {
-                if (state.flags.isHologramActive) {
-                    return { description: "L'hai già fatto. Il proiettore è attivo.", eventType: 'error' };
-                }
-                if (!state.inventory.includes("Cristallo Dati Attivato")) {
-                     if (state.inventory.includes("Cristallo Dati Opaco")) {
-                        return { description: "Il cristallo è inerte. Sembra che debba essere attivato in qualche modo prima di poter essere usato.", eventType: 'error' };
-                     }
-                    return { description: "Non hai un cristallo da usare.", eventType: 'error' };
-                }
-
-                const crystalIndex = state.inventory.indexOf("Cristallo Dati Attivato");
-                state.inventory.splice(crystalIndex, 1);
                 state.flags.isHologramActive = true;
-                state.flags.translationProgress = 42;
-
-                return {
-                    description: "Ti avvicini alla complessa struttura metallica che fluttua al centro della sala. Noti un piccolo incavo alla sua base, perfettamente sagomato per accogliere il cristallo pulsante. Lo inserisci.[PAUSE]Scatta in posizione con un 'click' quasi organico.[PAUSE]Immediatamente, un'ondata di energia silenziosa attraversa la stanza. Le postazioni di controllo si illuminano debolmente. La struttura centrale si anima, i suoi anelli iniziano a ruotare lentamente. Un fascio di luce si proietta verso la cupola nera, che ora non è più buia, ma mostra una mappa stellare tridimensionale di una porzione sconosciuta della galassia.[PAUSE]Al centro della mappa, appare l'immagine tremolante di una delle creature aliene, identica a quella che hai visto negli alloggi. Il suo volto è sereno, saggio. La figura alza una mano e indica un punto preciso della mappa: un piccolo, insignificante sistema solare giallo in una zona remota. Il tuo sistema solare.[PAUSE]Nel frattempo, il tuo scanner emette un segnale. Ha intercettato un'enorme quantità di dati dalla proiezione.\nStato traduzione: 42%",
-                    eventType: 'magic'
-                };
+                return { description: "Appoggi la tua mano guantata sulla depressione. La console reagisce al tuo tocco, riconoscendoti non per la tua identità, ma per il tuo intento. Riconosce che hai riunito l'eredità della nave.[PAUSE]Un'ondata di energia silenziosa attraversa la stanza. Le postazioni si illuminano. La struttura centrale si anima e proietta sulla cupola una magnifica e silenziosa mappa stellare tridimensionale.[PAUSE]La mappa mostra una rotta chiara, un viaggio millenario che attraversa il vuoto interstellare. Il punto di arrivo è inconfondibile: il tuo sistema solare.", eventType: 'magic' };
             }},
-            activateCrystalCommand,
-            analyzeMemoryCoreCommand,
+            { regex: "^(tocca|attiva|usa) (tre|3) punte( su porta)?$", handler: (state) => {
+                if (!state.flags.knowsAboutTrinarySystem) {
+                    return { description: "Non sai quale combinazione usare.", eventType: 'error' };
+                }
+                if (state.flags.isFinalDoorOpen) {
+                    return { description: "La porta è già aperta.", eventType: 'error' };
+                }
+                state.flags.isFinalDoorOpen = true;
+                return { description: "Ricordando la mappa stellare, la culla a tre soli, capisci. Appoggi la mano sul pannello e attivi tre delle punte luminose.[PAUSE]Un 'clic' armonioso risuona nel silenzio. La porta circolare si apre con un movimento fluido e silenzioso, rivelando una stanza avvolta in un'oscurità totale e sacra.", eventType: 'magic' };
+            }},
         ]
     },
     "Alloggi dell'Equipaggio": {

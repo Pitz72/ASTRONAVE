@@ -8,7 +8,7 @@ Il gioco è costruito su un motore narrativo dedicato, progettato per garantire 
 
 Un mistero fantascientifico. Sei il solitario pilota di una nave da carico che si imbatte in un'antica e silenziosa nave stellare aliena. Abbandonata? O c'è qualcosa in agguato nel buio? Dovrai usare il tuo ingegno per esplorare il relitto, una struttura tanto organica quanto tecnologica, e svelarne i segreti.
 
-L'avventura si dipana in più atti. **Atto I:** dovrai trovare un modo per entrare nel relitto. **Atto II:** una volta dentro, dovrai esplorare le sue vaste e decadenti ali per recuperare tre artefatti simbolici che rappresentano la vita, la cultura e la memoria dei suoi costruttori. **Atto III:** solo allora potrai accedere al cuore della nave per comprendere il suo misterioso scopo e il tuo posto in un piano cosmico che attraversa le galassie, culminando in una rivelazione finale sul legame tra l'umanità e i viaggiatori stellari.
+L'avventura si dipana in più atti. **Atto I:** dovrai trovare un modo per entrare nel relitto. **Atto II:** una volta dentro, dovrai esplorare le sue vaste e decadenti ali per recuperare tre artefatti simbolici che rappresentano la vita, la cultura e la memoria dei suoi costruttori. **Atto III:** Una volta riunita l'eredità della civiltà perduta, otterrai l'accesso al Ponte di Comando. Qui, in un'unica, densa sequenza narrativa, risveglierai il cuore della nave, decifrerai la loro destinazione finale e sbloccherai la porta del Santuario Centrale, dove la verità ultima sul legame tra l'umanità e i viaggiatori stellari ti attende.
 
 ## Caratteristiche
 
