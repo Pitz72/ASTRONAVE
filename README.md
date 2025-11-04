@@ -8,7 +8,7 @@ Il gioco è costruito su un motore narrativo dedicato, progettato per garantire 
 
 Un mistero fantascientifico. Sei il solitario pilota di una nave da carico che si imbatte in un'antica e silenziosa nave stellare aliena. Abbandonata? O c'è qualcosa in agguato nel buio? Dovrai usare il tuo ingegno per esplorare il relitto, una struttura tanto organica quanto tecnologica, e svelarne i segreti.
 
-L'avventura si dipana in più atti. Prima dovrai trovare un modo per entrare nel relitto. Poi, una volta dentro, dovrai esplorare le sue vaste e decadenti ali per recuperare tre artefatti simbolici che rappresentano la vita, la cultura e la memoria dei suoi costruttori. Solo allora potrai accedere al cuore della nave per comprendere il suo misterioso scopo e il tuo posto in un piano cosmico che attraversa le galassie, culminando in una rivelazione finale sul legame tra l'umanità e i viaggiatori stellari.
+L'avventura si dipana in più atti. **Atto I:** dovrai trovare un modo per entrare nel relitto. **Atto II:** una volta dentro, dovrai esplorare le sue vaste e decadenti ali per recuperare tre artefatti simbolici che rappresentano la vita, la cultura e la memoria dei suoi costruttori. **Atto III:** solo allora potrai accedere al cuore della nave per comprendere il suo misterioso scopo e il tuo posto in un piano cosmico che attraversa le galassie, culminando in una rivelazione finale sul legame tra l'umanità e i viaggiatori stellari.
 
 ## Caratteristiche
 
@@ -21,7 +21,7 @@ L'avventura si dipana in più atti. Prima dovrai trovare un modo per entrare nel
 - **Parser di Comandi Migliorato**: Interagisci con il mondo usando comandi in linguaggio naturale (in italiano). Il parser gestisce comandi in modo intelligente, ignorando maiuscole/minuscole, articoli (il, la, un, ecc.) e accenti per un'esperienza più fluida.
 - **Narrazione a Ritmo Controllato**: I testi più lunghi vengono presentati in segmenti, attendendo l'input del giocatore per continuare. Questo migliora la leggibilità e permette di assorbire la storia al proprio ritmo.
 - **Meccanica di Traduzione**: Trova frammenti di dati alieni e usa il tuo scanner per costruire una matrice di traduzione, svelando lentamente la storia e lo scopo del relitto.
-- **Enigmi Logici e basati sulla Conoscenza**: Risolvi enigmi ambientali e a più fasi usando l'osservazione, gli oggetti a tua disposizione e la conoscenza che hai acquisito esplorando e decifrando la storia del relitto. Alcuni enigmi richiedono di collegare indizi e oggetti trovati in stanze diverse.
+- **Enigmi Logici e basati sulla Conoscenza**: Risolvi enigmi ambientali e a più fasi usando l'osservazione, gli oggetti a tua disposizione e la conoscenza che hai acquisito esplorando e decifrando la storia del relitto. Alcuni enigmi richiedono di collegare indizi e oggetti trovati in stanze diverse, o di usare i tuoi strumenti in modi creativi e inaspettati.
 - **Esplorazione Non Lineare**: Avanza nell'avventura scegliendo il tuo percorso all'interno dell'enigmatico relitto alieno.
 - **Effetti Sonori 8-bit**: Suoni generati proceduralmente per tasti, azioni ed eventi, per aumentare l'immersione.
 - **Salvataggio e Caricamento**: Possibilità di salvare e caricare la partita in qualsiasi momento.

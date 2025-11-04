@@ -45,6 +45,23 @@ const activateCrystalCommand: Command = {
     }
 };
 
+const analyzeMemoryCoreCommand: Command = {
+    regex: "^(analizza) (nucleo|nucleo di memoria)$",
+    handler: (state) => {
+        if (!state.inventory.includes("Nucleo di Memoria")) {
+            return { description: "Non hai un Nucleo di Memoria da analizzare.", eventType: 'error' };
+        }
+        if (state.flags.translationProgress === 100) {
+            return { description: "Hai già estratto l'ultima, triste eco da questo cristallo. Non c'è altro da scoprire.", eventType: 'magic' };
+        }
+        state.flags.translationProgress = 100;
+        return {
+            description: "Inserisci il cristallo nel tuo scanner. Non contiene dati storici o scientifici. Contiene una singola registrazione audio-mnemonica, l'ultima voce salvata prima del collasso totale dell'archivio.[PAUSE]Stato traduzione: 100%. Testo decifrato.[PAUSE](Una voce calma ma infinitamente stanca risuona nella tua mente)\n'Log dell'Archivista, ciclo... non ha più importanza. Le matrici si stanno sfaldando. Il canto della nostra storia svanisce. Presto, tutto ciò che eravamo... non sarà mai stato. Ho salvato questo singolo pensiero. Un'eco nell'oscurità. Se qualcuno un giorno lo troverà, sappia che siamo esistiti. E che abbiamo sperato. Fine della registrazione.'",
+            eventType: 'magic'
+        };
+    }
+};
+
 export const gameData: { [key: string]: Room } = {
     "Plancia della Santa Maria": {
         description: () => "PLANCIA DELLA SANTA MARIA\n\nSei sulla plancia della tua nave da carico, la Santa Maria. È un ambiente familiare, vissuto, pieno di schermi e comandi che conosci a memoria. Lo spazio profondo ti circonda, punteggiato da stelle lontane. Davanti a te, nell'oblò principale, fluttua l'anomalia: un'ombra contro le stelle, un oggetto vasto e completamente buio che i tuoi sensori a lungo raggio hanno a malapena registrato. È una nave, non c'è dubbio, ma di un design che non hai mai visto. Silenziosa. Morta.\nSul pannello di controllo, una luce rossa lampeggia, indicando un allarme di prossimità.\nA OVEST c'è la porta che conduce alla stiva.",
@@ -354,17 +371,71 @@ export const gameData: { [key: string]: Room } = {
                 return { description: "OK, hai preso la Lastra Dati.", eventType: 'item_pickup' };
             }},
             // APRI / USA / TOCCA
-            { regex: "^(usa|inserisci) (seme|seme vivente) su (porta|porta ovest|incavo)$", handler: (state) => {
-                if (!state.inventory.includes("Seme Vivente")) {
-                    return { description: "Non hai un Seme Vivente da usare.", eventType: 'error' };
+            {
+                regex: "^(usa|inserisci) (seme vivente|seme|stele del ricordo|stele|nucleo di memoria|nucleo) su (porta|porta ovest|incavo)$",
+                handler: (state, match) => {
+                    const itemUsed = match[2];
+                    let itemKey = '';
+                    let flagKey = '';
+                    let itemName = '';
+
+                    if (itemUsed.includes('seme')) {
+                        itemKey = "Seme Vivente";
+                        flagKey = "seedPlaced";
+                        itemName = "il Seme Vivente";
+                    } else if (itemUsed.includes('stele')) {
+                        itemKey = "Stele del Ricordo";
+                        flagKey = "stelePlaced";
+                        itemName = "la Stele del Ricordo";
+                    } else if (itemUsed.includes('nucleo')) {
+                        itemKey = "Nucleo di Memoria";
+                        flagKey = "corePlaced";
+                        itemName = "il Nucleo di Memoria";
+                    }
+
+                    if (!itemKey) {
+                         return { description: `Non capisco cosa vuoi usare.`, eventType: 'error' };
+                    }
+
+                    if (!state.inventory.includes(itemKey)) {
+                        return { description: `Non hai ${itemName}.`, eventType: 'error' };
+                    }
+
+                    if (state.flags[flagKey]) {
+                        return { description: `Hai già posizionato ${itemName}.`, eventType: 'error' };
+                    }
+
+                    state.flags[flagKey] = true;
+                    const itemIndex = state.inventory.indexOf(itemKey);
+                    if (itemIndex > -1) {
+                        state.inventory.splice(itemIndex, 1);
+                    }
+                    
+                    let placedCount = 0;
+                    if (state.flags.seedPlaced) placedCount++;
+                    if (state.flags.stelePlaced) placedCount++;
+                    if (state.flags.corePlaced) placedCount++;
+
+                    if (placedCount === 3) {
+                        state.flags.isWestDoorUnlocked = true;
+                        return {
+                            description: `Posizioni ${itemName} nell'ultimo incavo vuoto. Si adatta perfettamente. Uno dopo l'altro, i tre artefatti si illuminano di una luce gentile. Un profondo ronzio risuona dalla porta, e il complesso simbolo a stella al suo centro si illumina. Con un sibilo quasi impercettibile, la grande porta si ritrae silenziosamente nella parete, rivelando il passaggio verso il cuore della nave.`,
+                            eventType: 'magic'
+                        };
+                    } else {
+                        return {
+                            description: `Posizioni ${itemName} nell'incavo corrispondente. Si illumina brevemente e poi si spegne. La porta rimane sigillata. Mancano ancora ${3 - placedCount} artefatti.`,
+                            eventType: 'item_use'
+                        };
+                    }
                 }
-                 return { description: "Inserisci il Seme Vivente nell'incavo a forma di seme. Si adatta perfettamente, ma la porta rimane sigillata. Sembra che manchi ancora qualcosa.", eventType: 'item_use' };
-            }},
+            },
             { regex: "^(usa|inserisci) (.+) su (porta|porta ovest|incavo)$", handler: (state, match) => {
                  return { description: `Provi a usare ${match[2]} sulla porta, ma non sembra avere alcun effetto.`, eventType: 'error' };
             }},
             { regex: "^(apri|usa|tocca) (porta ovest)$", handler: () => ({ description: "Appoggi la mano sul complesso simbolo a stella. A differenza delle altre, questa porta non reagisce. Rimane fredda, inerte e sigillata. I tre incavi alla base suggeriscono che serva qualcos'altro.", eventType: 'error' })},
             activateCrystalCommand,
+            analyzeMemoryCoreCommand,
         ]
     },
     "Serra Morente": {
@@ -541,7 +612,7 @@ export const gameData: { [key: string]: Room } = {
             if (!state.flags.discoPreso) {
                 desc += "\nUna delle nicchie sulla parete nord è buia. Il suo proiettore è spento e tremola debolmente.";
             }
-            desc += "\nL'unica uscita è a EST.";
+            desc += "\nL'unica uscita visibile è a EST. Tuttavia, dietro la postazione del proiettore olografico, noti una porta sottile, quasi invisibile, che conduce più in profondità in quest'ala della nave, verso NORD.";
             return desc;
         },
         commands: [
@@ -549,6 +620,10 @@ export const gameData: { [key: string]: Room } = {
             { regex: "^((vai|va) )?(est|e|santuario|indietro)$", handler: (state) => {
                 state.location = "Santuario del Silenzio";
                 return { description: gameData["Santuario del Silenzio"].description(state), eventType: 'movement' };
+            }},
+            { regex: "^((vai|va) )?(nord|n)$", handler: (state) => {
+                state.location = "Arca della Memoria";
+                return { description: gameData["Arca della Memoria"].description(state), eventType: 'movement' };
             }},
             // ESAMINA
             { regex: "^(esamina|guarda) (proiettori|nicchie|testo|ologrammi)$", handler: () => ({ description: "Sono archivi di dati olografici. Il testo è un flusso costante di simboli alieni che cambiano e si ricombinano. Senza una chiave di lettura, sono solo bellissime e incomprensibili opere d'arte digitale." }) },
@@ -585,6 +660,60 @@ export const gameData: { [key: string]: Room } = {
                 state.flags.discoPreso = true;
                 return { description: "Con un po' di fatica, smuovi il disco e lo estrai dal meccanismo del proiettore. È più pesante di quanto sembri. Ora hai il Disco di Pietra.", eventType: 'item_pickup' };
             }},
+        ]
+    },
+    "Arca della Memoria": {
+        description: (state) => "ARCA DELLA MEMORIA\n\nLa porta si apre su una caverna di cristallo nero. Enormi pilastri di dati, simili a monoliti, si ergono dal pavimento fino a un soffitto che non riesci a vedere. La maggior parte di essi è scura, inerte, alcuni sono visibilmente incrinati, emanando un'aura di profonda rovina. La debole luce bianca dello scriptorium qui è quasi assente, sostituita da un'oscurità quasi totale. L'aria è fredda e immobile, carica del peso di un silenzio millenario.\nIn fondo alla sala, un singolo pilastro emette una debolissima e intermittente pulsazione di luce ambrata. È l'unica fonte di luce in questo mausoleo di informazioni. Accanto ad esso, c'è un terminale di accesso.\nL'unica uscita è a SUD.",
+        commands: [
+            // MOVIMENTO
+            { regex: "^((vai|va) )?(sud|s|scriptorium|indietro)$", handler: (state) => {
+                state.location = "Scriptorium";
+                return { description: gameData["Scriptorium"].description(state), eventType: 'movement' };
+            }},
+            { regex: "^((vai|va) )?(nord|est|ovest|n|e|o)$", handler: () => ({ description: "Non puoi andare in quella direzione. L'unica via d'uscita è a SUD.", eventType: 'error' }) },
+            // ESAMINA
+            { regex: "^(esamina|guarda) (pilastri|monoliti|cristalli)$", handler: () => ({ description: "Sono archivi di dati cristallini di una capacità inimmaginabile. La maggior parte è irrimediabilmente danneggiata. Le crepe che li attraversano sembrano ferite mortali." }) },
+            { regex: "^(esamina|guarda) (pilastro pulsante|pilastro illuminato)$", handler: () => ({ description: "È l'unico archivio che mostra ancora segni di vita. La sua luce è debole, un battito cardiaco morente. È da qui che proviene tutta la conoscenza residua della nave." }) },
+            { regex: "^(esamina|guarda) (terminale|console|accesso)$", handler: () => ({ description: "È un terminale di accesso al pilastro di dati. È completamente spento. Sulla sua superficie c'è un pannello di bypass energetico, chiaramente progettato per le emergenze." }) },
+            // ANALIZZA
+            { regex: "^(analizza) (pilastri|pilastro)$", handler: () => ({
+                description: "Lo scanner conferma la tua peggiore paura.[PAUSE]ANALISI ARCHIVIO CENTRALE: Integrità dati stimata: 0.001%.\nCAUSA: corruzione a cascata dovuta a degradazione entropica nel lungo periodo. Perdita di dati catastrofica e irreversibile.[PAUSE]Millenni di storia, scienza, arte e filosofia. Tutta la conoscenza di una civiltà che ha attraversato le galassie... svanita. Polvere digitale. Questa è la loro seconda morte, più totale e definitiva della prima.",
+                eventType: 'magic'
+            })},
+            { regex: "^(analizza) (terminale)$", handler: () => ({
+                description: "Il terminale è in uno stato di ibernazione profonda. Per riattivarlo, anche solo per un istante, servirebbe un picco di energia improvviso e ad alto voltaggio, diretto al pannello di bypass. Un sovraccarico controllato.",
+                eventType: 'magic'
+            })},
+            // USA
+            { regex: "^(usa) (taglierina|taglierina al plasma) su (pannello|terminale)$", handler: (state) => {
+                if (!state.inventory.includes("Taglierina al Plasma")) {
+                    return { description: "Non hai una taglierina al plasma.", eventType: 'error' };
+                }
+                if (state.flags.isTerminalActive) {
+                    return { description: "L'hai già fatto. Il terminale è attivo, anche se a malapena.", eventType: 'error' };
+                }
+                state.flags.isTerminalActive = true;
+                return {
+                    description: "Capisci cosa devi fare. È un'idea folle, ma è l'unica che hai. Imposti la tua taglierina al plasma sulla massima potenza e, per una frazione di secondo, dirigi il getto energetico sul pannello di bypass.[PAUSE]Il terminale sfrigola, uno sbuffo di ozono riempie l'aria. Per un istante temi di averlo distrutto. Poi, lo schermo si accende con un'unica parola nella lingua aliena e un piccolo scomparto si apre alla base del terminale, rivelando un cristallo poliedrico.",
+                    eventType: 'item_use'
+                };
+            }},
+            { regex: "^(usa) (.+) su (terminale|pannello)$", handler: () => ({ description: "Non ha alcun effetto. Il terminale ha bisogno di un potente shock energetico.", eventType: 'error' }) },
+            // PRENDI
+            { regex: "^(prendi) (nucleo|cristallo|nucleo di memoria)$", handler: (state) => {
+                if (!state.flags.isTerminalActive) {
+                    return { description: "È sigillato all'interno del terminale.", eventType: 'error' };
+                }
+                if (state.inventory.includes("Nucleo di Memoria")) {
+                    return { description: "L'hai già preso.", eventType: 'error' };
+                }
+                state.inventory.push("Nucleo di Memoria");
+                return {
+                    description: "OK, hai preso il Nucleo di Memoria.",
+                    eventType: 'item_pickup'
+                };
+            }},
+            analyzeMemoryCoreCommand,
         ]
     },
     "Ponte di Comando": {
@@ -688,6 +817,7 @@ export const gameData: { [key: string]: Room } = {
                 };
             }},
             activateCrystalCommand,
+            analyzeMemoryCoreCommand,
         ]
     },
     "Alloggi dell'Equipaggio": {
