@@ -295,28 +295,21 @@ export const gameData: { [key: string]: Room } = {
         commands: [
             // MOVIMENTO
             { regex: "^((vai|va) )?(nord|n)$", handler: (state) => {
-                if (state.flags.isNorthDoorOpen) {
-                    state.location = "Ponte di Comando";
-                    return { description: gameData["Ponte di Comando"].description(state), eventType: 'movement' };
-                }
-                return { description: "La porta a nord è chiusa.", eventType: 'error' };
+                return { description: "La porta a nord si apre con un sibilo, ma l'oscurità che vedi oltre è innaturale. Senti una strana pressione mentale, come un avvertimento. Decidi di non procedere per ora.", eventType: 'error' };
             }},
             { regex: "^((vai|va) )?(sud|s)$", handler: (state) => {
-                if (state.flags.isSouthDoorOpen) {
-                    state.location = "Alloggi dell'Equipaggio";
-                    return { description: gameData["Alloggi dell'Equipaggio"].description(state), eventType: 'movement' };
-                }
-                return { description: "La porta a sud è chiusa.", eventType: 'error' };
+                state.location = "Serra Morente";
+                return { description: gameData["Serra Morente"].description(state), eventType: 'movement' };
             }},
              { regex: "^((vai|va) )?(ovest|o)$", handler: (state) => {
-                if (!state.flags.isWestDoorUnlocked) {
-                    return { description: "La grande porta a ovest è sigillata. Non puoi aprirla.", eventType: 'error' };
+                if (state.flags.isWestDoorUnlocked) {
+                    state.location = "Ponte di Comando";
+                    return {
+                        description: gameData["Ponte di Comando"].description(state),
+                        eventType: 'movement'
+                    };
                 }
-                state.location = "Santuario Centrale";
-                return {
-                    description: "Fai un passo avanti, e la porta di luce si richiude alle tue spalle. Sei nell'oscurità più completa e in un silenzio ancora più profondo di prima. Poi, la stanza reagisce alla tua presenza.[PAUSE]Sottili linee di luce si tracciano sul pavimento, convergendo verso il centro della stanza e illuminando un piedistallo di cristallo. Sopra di esso, le particelle di luce iniziano a coalescere, a danzare, fino a formare una figura alta e luminosa: un'immagine spettrale, un ologramma di uno degli antichi viaggiatori. Ti guarda, e anche se il suo volto è impassibile, senti un'infinita stanchezza e una profonda saggezza nei suoi occhi di luce.",
-                    eventType: 'magic'
-                };
+                return { description: "La grande porta a ovest è sigillata. I tre incavi alla sua base sembrano suggerire che siano necessarie delle chiavi per aprirla.", eventType: 'error' };
             }},
             { regex: "^((vai|va) )?(est|e|indietro)$", handler: (state) => {
                 return { description: "La porta da cui sei entrato si è richiusa, diventando indistinguibile dal resto della parete. Non c'è via di ritorno.", eventType: 'error' };
@@ -331,7 +324,7 @@ export const gameData: { [key: string]: Room } = {
             { regex: "^(esamina|guarda) (pareti|muro|soffitto|pavimento)$", handler: () => ({ description: "Le pareti non sembrano costruite, ma... cresciute. La superficie è liscia ma con una micro-trama simile all'osso o alla madreperla. È da qui che proviene la debole luce bluastra." }) },
             { regex: "^(esamina|guarda) (luce|luminescenza)$", handler: () => ({ description: "La luce non ha una fonte. Le pareti stesse brillano debolmente, proiettando ombre lunghe e incerte. È una luce fredda, quasi spettrale." }) },
             { regex: "^(esamina|guarda) (porta nord|porta sud)$", handler: () => ({ description: "È un pannello perfettamente integrato nella parete. Al suo centro è inciso un semplice simbolo, simile a una spirale. Non ci sono maniglie o controlli visibili." }) },
-            { regex: "^(esamina|guarda) (porta ovest)$", handler: () => ({ description: "Questa porta è visibilmente più grande e massiccia delle altre. Il simbolo inciso qui è molto più complesso, una sorta di diagramma stellare a più punte. Emana una sensazione di importanza." }) },
+            { regex: "^(esamina|guarda) (porta ovest)$", handler: () => ({ description: "Questa porta è visibilmente più grande e massiccia delle altre. Il simbolo inciso qui è molto più complesso, una sorta di diagramma stellare a più punte. Alla base della porta, noti tre incavi di forme diverse: uno a forma di seme, uno a forma di tavoletta rettangolare e uno a forma di cristallo poliedrico. La porta è fredda e inerte." }) },
             { regex: "^(esamina|guarda) (porta est)$", handler: () => ({ description: "È la porta della camera di compensazione da cui sei entrato. Ora è chiusa e indistinguibile dal resto della parete." }) },
             // ANALIZZA
             { regex: "^(analizza) (lastra|lastra dati)$", handler: (state, match) => {
@@ -360,37 +353,101 @@ export const gameData: { [key: string]: Room } = {
                 return { description: "OK, hai preso la Lastra Dati.", eventType: 'item_pickup' };
             }},
             // APRI / USA / TOCCA
-            { regex: "^(apri|usa|tocca) (porta nord|simbolo nord|spirale nord)$", handler: (state) => {
-                if (state.flags.isNorthDoorOpen) {
-                     return { description: "La porta è già aperta.", eventType: 'error' };
+            { regex: "^(usa|inserisci) (seme|seme vivente) su (porta|porta ovest|incavo)$", handler: (state) => {
+                if (!state.inventory.includes("Seme Vivente")) {
+                    return { description: "Non hai un Seme Vivente da usare.", eventType: 'error' };
                 }
-                state.flags.isNorthDoorOpen = true;
-                return { description: "Appoggi esitante la mano guantata sul simbolo a spirale. Per un istante, l'incisione brilla di una luce più intensa. Poi, senza alcun suono, la porta si dissolve, ritirandosi nella parete e aprendo il passaggio a nord.", eventType: 'magic' };
+                 return { description: "Inserisci il Seme Vivente nell'incavo a forma di seme. Si adatta perfettamente, ma la porta rimane sigillata. Sembra che manchi ancora qualcosa.", eventType: 'item_use' };
             }},
-            { regex: "^(apri|usa|tocca) (porta sud|simbolo sud|spirale sud)$", handler: (state) => {
-                if (state.flags.isSouthDoorOpen) {
-                     return { description: "La porta è già aperta.", eventType: 'error' };
-                }
-                state.flags.isSouthDoorOpen = true;
-                return { description: "Appoggi la mano sul simbolo. Come per la porta a nord, l'incisione si illumina e il passaggio si apre silenziosamente.", eventType: 'magic' };
+            { regex: "^(usa|inserisci) (.+) su (porta|porta ovest|incavo)$", handler: (state, match) => {
+                 return { description: `Provi a usare ${match[2]} sulla porta, ma non sembra avere alcun effetto.`, eventType: 'error' };
             }},
-            { regex: "^(tocca|premi|attiva) (tre|3) (punte|punti)( del simbolo| sul simbolo|)$", handler: (state) => {
-                if (!state.flags.knowsAboutTrinarySystem) {
-                    return { description: "Non hai idea di quante punte toccare. Sembra un meccanismo complesso e non vuoi attivarlo a caso.", eventType: 'error' };
-                }
-                if (state.flags.isWestDoorUnlocked) {
-                    return { description: "L'hai già fatto. La porta è già dissolta in luce.", eventType: 'error' };
-                }
-                state.flags.isWestDoorUnlocked = true;
-                return {
-                    description: "Ricordando la mappa stellare, la culla a tre soli dei costruttori della nave, capisci. Non è una serratura, è una domanda. E tu hai la risposta.[PAUSE]Appoggi la mano sul simbolo e, invece di spingere, attivi tre delle sue punte luminose in sequenza.[PAUSE]Per un istante, non accade nulla. Poi, un profondo e risonante 'gong' vibra attraverso la struttura della nave. Il simbolo a stella brilla di una luce bianca e accecante.[PAUSE]Lentamente, la grande porta a Ovest si dissolve in particelle di luce, rivelando l'ingresso a una stanza avvolta in un'oscurità totale.",
-                    eventType: 'magic'
-                };
-            }},
-            { regex: "^(tocca|premi|attiva) (punte|punti)( del simbolo| sul simbolo|)$", handler: () => ({ description: "Quali punte? E quante?" })},
-            { regex: "^(tocca|usa) (simbolo|simbolo ovest|stella)$", handler: () => ({ description: "Il complesso simbolo a stella rimane inerte. Senti che un semplice tocco non è sufficiente. È un meccanismo, non un interruttore." })},
-            { regex: "^(apri|usa|tocca) (porta ovest)$", handler: () => ({ description: "Appoggi la mano sul complesso simbolo a stella. A differenza delle altre, questa porta non reagisce. Rimane fredda, inerte e sigillata. Sembra richiedere una qualche forma di... autorizzazione o una chiave.", eventType: 'error' })},
+            { regex: "^(apri|usa|tocca) (porta ovest)$", handler: () => ({ description: "Appoggi la mano sul complesso simbolo a stella. A differenza delle altre, questa porta non reagisce. Rimane fredda, inerte e sigillata. I tre incavi alla base suggeriscono che serva qualcos'altro.", eventType: 'error' })},
             activateCrystalCommand,
+        ]
+    },
+    "Serra Morente": {
+        description: (state) => {
+            let desc = "SERRA MORENTE\n\nSei in una vasta serra a cupola. Enormi piante aliene, simili a felci scheletriche e funghi contorti, pendono dalle pareti come spettri. Tutto è secco, morto, coperto da uno strato di polvere che sembra neve grigia.";
+            if (state.flags.semeLiberato) {
+                desc += "\nIl silenzio ora è totale, dopo che il ronzio del campo di contenimento è cessato.";
+            } else {
+                desc += "\nUn ronzio a bassa frequenza, costante e fastidioso, vibra nell'aria.";
+            }
+            
+            if (!state.flags.semeLiberato) {
+                desc += "\nAl centro della sala, sotto la cupola, c'è una teca di cristallo trasparente. All'interno, qualcosa brilla di una luce propria.";
+            } else {
+                desc += "\nAl centro della sala, i resti del contenitore del seme giacciono inattivi.";
+            }
+            
+            desc += "\nL'unica uscita è a NORD.";
+            return desc;
+        },
+        commands: [
+            { regex: "^((vai|va) )?(nord|n|indietro|corridoio)$", handler: (state) => {
+                state.location = "Corridoio Principale";
+                return { description: gameData["Corridoio Principale"].description(state), eventType: 'movement' };
+            }},
+            // ESAMINA
+            { regex: "^(esamina|guarda) (piante|felci|funghi)$", handler: (state) => {
+                state.flags.spottedTavoletta = true;
+                return { description: "Sono i resti secchi di una flora aliena un tempo rigogliosa. Toccandone una, si sbriciola in polvere fine. La polvere ti solletica la gola anche attraverso i filtri della tuta. Nascosta tra i resti di un grosso arbusto vicino alla parete est, noti una piccola tavoletta di pietra." };
+            }},
+            { regex: "^(esamina|guarda) (teca|cristallo|centro)$", handler: (state) => {
+                if (state.flags.semeLiberato) {
+                    return { description: "La teca si è dissolta. Ora rimangono solo la base e il pannello di controllo, spenti." };
+                }
+                return { description: "È una teca di contenimento sigillata, alta circa un metro. All'interno, sospeso in un campo di stasi, c'è un singolo seme che pulsa di una gentile luce verde. È l'unica cosa viva in questa stanza di morte. Alla base della teca c'è un piccolo pannello con una serie di simboli incisi e un unico incavo rettangolare." };
+            }},
+            { regex: "^(esamina|guarda) (polvere|neve|spore)$", handler: () => ({ description: "È uno strato di spore morte e materia vegetale decomposta. Non sembra pericoloso, solo... triste." }) },
+            { regex: "^(esamina|guarda) (tavoletta|tavoletta incisa)$", handler: (state) => {
+                if (state.inventory.includes("Tavoletta Incisa") || (state.flags.spottedTavoletta && !state.flags.tavolettaPresa)) {
+                     return { description: "È una tavoletta rettangolare di pietra scura, con incisi tre simboli botanici e una sequenza di linee accanto a ciascuno." };
+                }
+                return { description: "Non vedi nessuna tavoletta.", eventType: 'error' };
+            }},
+            // ANALIZZA
+            { regex: "^(analizza) (stanza|aria|serra)$", handler: () => ({ description: "Lo scanner rileva un'alta concentrazione di spore organiche inerti nell'aria. Il ronzio a bassa frequenza proviene da un campo di contenimento energetico malfunzionante che circonda la stanza. È instabile, ma non rappresenta un pericolo immediato.", eventType: 'magic'})},
+            { regex: "^(analizza) (teca)$", handler: (state) => {
+                if (state.flags.semeLiberato) return { description: "Il meccanismo è disattivato." };
+                return { description: "La teca è protetta da un blocco magnetico complesso. Il pannello alla base è l'unica interfaccia. Lo scanner non riesce a bypassarlo. La sequenza di sblocco sembra richiedere un input esterno, da inserire nell'incavo rettangolare.", eventType: 'magic'};
+            }},
+            { regex: "^(analizza) (seme|seme vivente)$", handler: (state) => {
+                 if (state.inventory.includes("Seme Vivente")) return { description: "Incredibile. Lo scanner rileva un'intensa attività biologica. Questo seme non è solo in stasi, è vivo e sano. Contiene un genoma di una complessità sbalorditiva. È una vera e propria arca genetica in miniatura.", eventType: 'magic' };
+                 if (state.flags.semeLiberato) return { description: "Non c'è più nessun seme qui da analizzare." };
+                 return { description: "Incredibile. Lo scanner rileva un'intensa attività biologica. Questo seme non è solo in stasi, è vivo e sano. Contiene un genoma di una complessità sbalorditiva. È una vera e propria arca genetica in miniatura.", eventType: 'magic' };
+            }},
+            // PRENDI
+            { regex: "^(prendi) (seme|seme vivente)$", handler: (state) => {
+                if (state.inventory.includes("Seme Vivente")) return { description: "Ce l'hai già.", eventType: 'error' };
+                return { description: "È sigillato all'interno della teca di cristallo. Non puoi raggiungerlo.", eventType: 'error' };
+            }},
+            { regex: "^(prendi) (tavoletta|tavoletta incisa)$", handler: (state) => {
+                if (!state.flags.spottedTavoletta) {
+                     return { description: "Non vedi nessuna tavoletta da prendere.", eventType: 'error' };
+                }
+                if (state.flags.tavolettaPresa) {
+                    return { description: "L'hai già presa.", eventType: 'error' };
+                }
+                state.inventory.push("Tavoletta Incisa");
+                state.flags.tavolettaPresa = true;
+                return { description: "OK, hai preso la Tavoletta Incisa.", eventType: 'item_pickup' };
+            }},
+            // USA
+            { regex: "^(usa) (tavoletta|tavoletta incisa) su (pannello|teca|incavo)$", handler: (state) => {
+                if (!state.inventory.includes("Tavoletta Incisa")) {
+                    return { description: "Non hai una tavoletta da usare.", eventType: 'error' };
+                }
+                if (state.flags.semeLiberato) {
+                    return { description: "L'hai già fatto.", eventType: 'error' };
+                }
+                const tavolettaIndex = state.inventory.indexOf("Tavoletta Incisa");
+                state.inventory.splice(tavolettaIndex, 1);
+                state.inventory.push("Seme Vivente");
+                state.flags.semeLiberato = true;
+                return { description: "Inserisci la tavoletta nell'incavo del pannello. Si adatta perfettamente. I simboli sulla tavoletta si illuminano in sequenza, e il pannello emette un 'clic' armonioso.[PAUSE]La teca di cristallo si dissolve in un pulviscolo di luce, lasciando il Seme Vivente fluttuare a mezz'aria davanti a te. Lo prendi con delicatezza. È caldo al tatto e pulsa debolmente nel tuo guanto.[PAUSE]Non appena prendi il seme, il fastidioso ronzio nella stanza cessa. Il silenzio torna a regnare, ora più profondo di prima.", eventType: 'magic' };
+            }},
         ]
     },
     "Ponte di Comando": {

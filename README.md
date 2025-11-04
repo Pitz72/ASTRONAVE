@@ -6,11 +6,14 @@ Il gioco è costruito su un motore narrativo dedicato, progettato per garantire 
 
 ## Trama
 
-Un mistero fantascientifico. Sei il solitario pilota di una nave da carico che si imbatte in un'antica e silenziosa nave stellare aliena. Abbandonata? O c'è qualcosa in agguato nel buio? Dovrai usare il tuo ingegno per esplorare il relitto, una struttura tanto organica quanto tecnologica, e svelarne i segreti, traducendo le memorie perdute dei suoi costruttori per comprendere il suo misterioso scopo e il tuo posto in un piano cosmico che attraversa le galassie, culminando in una rivelazione finale sul legame tra l'umanità e i viaggiatori stellari.
+Un mistero fantascientifico. Sei il solitario pilota di una nave da carico che si imbatte in un'antica e silenziosa nave stellare aliena. Abbandonata? O c'è qualcosa in agguato nel buio? Dovrai usare il tuo ingegno per esplorare il relitto, una struttura tanto organica quanto tecnologica, e svelarne i segreti.
+
+L'avventura si dipana in più atti. Prima dovrai trovare un modo per entrare nel relitto. Poi, una volta dentro, dovrai esplorare le sue vaste e decadenti ali per recuperare tre artefatti simbolici che rappresentano la vita, la cultura e la memoria dei suoi costruttori. Solo allora potrai accedere al cuore della nave per comprendere il suo misterioso scopo e il tuo posto in un piano cosmico che attraversa le galassie, culminando in una rivelazione finale sul legame tra l'umanità e i viaggiatori stellari.
 
 ## Caratteristiche
 
 - **Display Virtuale a Risoluzione Fissa**: Il gioco viene renderizzato all'interno di un "monitor virtuale" con una risoluzione nativa di 1920x1080 (16:9). Questo contenitore si adatta dinamicamente a qualsiasi dimensione della finestra del browser, mantenendo sempre l'aspect ratio corretto e garantendo un'esperienza visiva coerente e perfettamente centrata su qualsiasi schermo.
+- **Struttura a Tre Atti**: L'avventura si dipana in tre atti distinti: l'ingresso nel relitto, l'esplorazione delle sue ali dimenticate per recuperare tre artefatti chiave, e la rivelazione finale nel suo santuario.
 - **Estetica Retrò**: Interfaccia che simula un monitor a fosfori verdi, completa di scanlines e font pixelato.
 - **Esperienza Narrativa Curata**: Dimentica la casualità delle AI. Ogni testo, enigma e interazione è stato scritto a mano per garantire un'esperienza coerente e avvincente. La storia si svela su più livelli: attraverso l'ambiente, i log alieni da decifrare e le rivelazioni che collegano tutti gli indizi.
 - **Onboarding Guidato**: Un menu di avvio minimalista e d'impatto introduce il giocatore all'atmosfera del gioco. Una schermata di istruzioni dedicata, accessibile dal menu, spiega in dettaglio i comandi di base e la meccanica di gioco unica (`ESAMINA` vs `ANALIZZA`), garantendo un'esperienza di onboarding fluida.
