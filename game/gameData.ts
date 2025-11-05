@@ -115,7 +115,7 @@ export const gameData: { [key: string]: Room } = {
                 return { description: "Sarebbe un suicidio. Devi prima indossare la tuta spaziale per uscire nel vuoto.", eventType: 'error' };
             }},
             // ESAMINA
-            { regex: "^(esamina|guarda) (casse|minerale|carico)$", handler: () => ({ description: "Casse di minerale di ferro e nichel. Contenuto standard, noioso ma redditizio. Non ti servono ora." }) },
+            { regex: "^(esamina|guarda) (casse|minerale|carico)$", handler: () => ({ description: "Sono casse di minerale di ferro e nichel. Contenuto standard, noioso ma redditizio. In un angolo, tra due contenitori semiaperti, noti della cianfrusaglia personale: un vecchio lettore di ebook ammaccato, con lo schermo rotto che mostra ancora debolmente il titolo di un'antica avventura testuale: '...nello di Ghiaccio'." }) },
             { regex: "^(esamina|guarda) (tuta|tuta spaziale)$", handler: () => ({ description: "È la tua tuta da lavoro extraveicolare. Pesante, affidabile, con abbastanza ossigeno per sei ore di lavoro." }) },
             { regex: "^(esamina|guarda) (kit|kit di manutenzione|valigetta)$", handler: () => ({ description: "Una valigetta metallica con il logo della Weyland Corp. Contiene gli attrezzi base per le riparazioni d'emergenza." }) },
             { regex: "^(esamina|guarda) (portello|boccaporto|uscita sud)$", handler: () => ({ description: "È il boccaporto esterno. Una spessa lastra di metallo che conduce al vuoto dello spazio." }) },

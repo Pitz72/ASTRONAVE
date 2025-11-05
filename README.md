@@ -1,6 +1,6 @@
 # IL RELITTO SILENTE
 
-**Versione 0.3.1 - Portabilità dei Salvataggi**
+**Versione 0.3.2 - Dettagli Nascosti**
 
 Un'avventura testuale (interactive fiction) di fantascienza con parser di comandi, ispirata ai classici giochi a riga di comando dei primi anni '80. L'intera esperienza è progettata per emulare l'estetica di un monitor a fosfori verdi di un vecchio terminale.
 
@@ -27,6 +27,7 @@ L'avventura si dipana in più atti. **Atto I:** dovrai trovare un modo per entra
 - **Meccanica di Traduzione**: Trova frammenti di dati alieni e usa il tuo scanner per costruire una matrice di traduzione, svelando lentamente la storia e lo scopo del relitto.
 - **Enigmi Logici e basati sulla Conoscenza**: Risolvi enigmi ambientali e a più fasi usando l'osservazione, gli oggetti a tua disposizione e la conoscenza che hai acquisito esplorando e decifrando la storia del relitto. Alcuni enigmi richiedono di collegare indizi e oggetti trovati in stanze diverse, o di usare i tuoi strumenti in modi creativi e inaspettati.
 - **Esplorazione Non Lineare**: Avanza nell'avventura scegliendo il tuo percorso all'interno dell'enigmatico relitto alieno.
+- **Dettagli Nascosti e Omaggi**: Il mondo di gioco è arricchito da piccoli dettagli e omaggi culturali che premiano i giocatori più attenti.
 - **Effetti Sonori 8-bit**: Suoni generati proceduralmente per tasti, azioni ed eventi, per aumentare l'immersione.
 - **Salvataggio e Caricamento basato su File**: Possibilità di salvare la partita scaricando un file `.json` e di caricarla in qualsiasi momento, garantendo la portabilità dei salvataggi.
 
