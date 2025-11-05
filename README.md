@@ -1,6 +1,6 @@
 # IL RELITTO SILENTE
 
-**Versione 0.3.2 - Dettagli Nascosti**
+**Versione 0.4.0 - Architettura Modulare**
 
 Un'avventura testuale (interactive fiction) di fantascienza con parser di comandi, ispirata ai classici giochi a riga di comando dei primi anni '80. L'intera esperienza è progettata per emulare l'estetica di un monitor a fosfori verdi di un vecchio terminale.
 
@@ -17,6 +17,7 @@ L'avventura si dipana in più atti. **Atto I:** dovrai trovare un modo per entra
 ## Caratteristiche
 
 - **Display Virtuale a Risoluzione Fissa**: Il gioco viene renderizzato all'interno di un "monitor virtuale" con una risoluzione nativa di 1920x1080 (16:9). Questo contenitore si adatta dinamicamente a qualsiasi dimensione della finestra del browser, mantenendo sempre l'aspect ratio corretto e garantendo un'esperienza visiva coerente e perfettamente centrata su qualsiasi schermo.
+- **Architettura Modulare e Scalabile**: Il codice sorgente è stato rifattorizzato da una base monolitica a una struttura modulare, dove ogni stanza e componente logico è incapsulato nel proprio file. Questo garantisce un'elevata manutenibilità e rende il progetto robusto e facilmente espandibile per futuri contenuti.
 - **Struttura a Tre Atti**: L'avventura si dipana in tre atti distinti: l'ingresso nel relitto, l'esplorazione delle sue ali dimenticate per recuperare tre artefatti chiave, e la rivelazione finale nel suo santuario.
 - **Estetica Retrò**: Interfaccia che simula un monitor a fosfori verdi, completa di scanlines e font pixelato.
 - **Esperienza Narrativa Curata**: Dimentica la casualità delle AI. Ogni testo, enigma e interazione è stato scritto a mano per garantire un'esperienza coerente e avvincente. La storia si svela su più livelli: attraverso l'ambiente, i log alieni da decifrare e le rivelazioni che collegano tutti gli indizi.

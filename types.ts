@@ -22,3 +22,21 @@ export interface GameResponse {
     gameOver?: string | null;
     continueText?: string | null;
 }
+
+export interface CommandHandlerResult {
+    description: string;
+    eventType?: GameEventType;
+    gameOver?: string | null;
+}
+
+export type CommandHandler = (state: PlayerState, match: RegExpMatchArray) => CommandHandlerResult;
+
+export interface Command {
+    regex: string;
+    handler: CommandHandler;
+}
+
+export interface Room {
+    description: (state: PlayerState) => string;
+    commands: Command[];
+}
