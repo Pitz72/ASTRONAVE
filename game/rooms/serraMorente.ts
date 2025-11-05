@@ -11,7 +11,7 @@ export const serraMorenteRoom: Room = {
         }
         
         if (!state.flags.semeLiberato) {
-            desc += "\nAl centro della sala, sotto la cupola, c'è una teca di cristallo trasparente. All'interno, qualcosa brilla di una luce propria.";
+            desc += "\nAl centro della sala, sotto la cupola, c'è una teca di cristallo trasparente. All'interno, qualcosa brilla di una luce propria.[PAUSE]";
         } else {
             desc += "\nAl centro della sala, i resti del contenitore del seme giacciono inattivi.";
         }
@@ -49,22 +49,24 @@ export const serraMorenteRoom: Room = {
             }
             return { description: "Non vedi nessuna tavoletta.", eventType: 'error' };
         }},
+        { regex: "^(esamina|guarda) (seme|seme vivente)$", handler: () => ({ description: "È un seme delle dimensioni di un pugno, che emette una luce verde gentile e pulsante. La sua superficie è liscia e calda, e sembra quasi vibrare di vita contenuta. È l'unica cosa viva qui dentro." }) },
         { regex: "^(esamina|guarda) (passaggio|muro ovest)$", handler: () => ({ description: "È un'apertura non contrassegnata, quasi nascosta dalla vegetazione morta. Conduce in un'area ancora più buia e fredda." }) },
         // ANALIZZA
+        { regex: "^(analizza) (piante|felci|funghi)$", handler: () => ({ description: "L'analisi cellulare mostra una struttura biologica complessa, ma completamente inerte. La morte è avvenuta per disidratazione e collasso atmosferico in un tempo molto, molto lungo.", eventType: 'magic' }) },
         { regex: "^(analizza) (stanza|aria|serra)$", handler: () => ({ description: "Lo scanner rileva un'alta concentrazione di spore organiche inerti nell'aria. Il ronzio a bassa frequenza proviene da un campo di contenimento energetico malfunzionante che circonda la stanza. È instabile, ma non rappresenta un pericolo immediato.", eventType: 'magic'})},
         { regex: "^(analizza) (teca)$", handler: (state) => {
             if (state.flags.semeLiberato) return { description: "Il meccanismo è disattivato." };
             return { description: "La teca è protetta da un blocco magnetico complesso. Il pannello alla base è l'unica interfaccia. Lo scanner non riesce a bypassarlo. La sequenza di sblocco sembra richiedere un input esterno, da inserire nell'incavo rettangolare.", eventType: 'magic'};
         }},
         { regex: "^(analizza) (seme|seme vivente)$", handler: (state) => {
-             if (state.inventory.includes("Seme Vivente")) return { description: "Incredibile. Lo scanner rileva un'intensa attività biologica. Questo seme non è solo in stasi, è vivo e sano. Contiene un genoma di una complessità sbalorditiva. È una vera e propria arca genetica in miniatura.", eventType: 'magic' };
-             if (state.flags.semeLiberato) return { description: "Non c'è più nessun seme qui da analizzare." };
              return { description: "Incredibile. Lo scanner rileva un'intensa attività biologica. Questo seme non è solo in stasi, è vivo e sano. Contiene un genoma di una complessità sbalorditiva. È una vera e propria arca genetica in miniatura.", eventType: 'magic' };
         }},
         // PRENDI
         { regex: "^(prendi) (seme|seme vivente)$", handler: (state) => {
             if (state.inventory.includes("Seme Vivente")) return { description: "Ce l'hai già.", eventType: 'error' };
-            return { description: "È sigillato all'interno della teca di cristallo. Non puoi raggiungerlo.", eventType: 'error' };
+            if (!state.flags.semeLiberato) return { description: "È sigillato all'interno della teca di cristallo. Non puoi raggiungerlo.", eventType: 'error' };
+            state.inventory.push("Seme Vivente"); // This case should not be reachable if logic is correct
+            return { description: "OK, hai preso il Seme Vivente.", eventType: 'item_pickup' };
         }},
         { regex: "^(prendi) (tavoletta|tavoletta incisa)$", handler: (state) => {
             if (!state.flags.spottedTavoletta) {

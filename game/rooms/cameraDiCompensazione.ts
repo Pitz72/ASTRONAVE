@@ -33,7 +33,8 @@ export const cameraDiCompensazioneRoom: Room = {
             state.flags.knowsAboutPanelPower = true;
             return { description: "Il tuo multiscanner rileva una micro-rete di fibre energetiche sotto la superficie liscia. Il sistema è progettato per gestire la pressurizzazione della stanza e l'apertura della porta interna, ma è dormiente. Sembra esserci una porta di accesso per una fonte di energia esterna a basso voltaggio.", eventType: 'magic' };
         }},
-        // USA
+        // USA / TOCCA
+        { regex: "^(tocca) (pareti|muro|soffitto|pavimento)$", handler: () => ({ description: "Appoggi una mano sulla parete. È fredda come il ghiaccio e liscia come il vetro. Non senti alcuna vibrazione, solo una quiete profonda e antica." }) },
         { regex: "^(usa) (batteria|batteria di emergenza) su (pannello|pannello di controllo)$", handler: (state) => {
             if (!state.inventory.includes("Batteria di Emergenza")) {
                 return { description: "Non hai una batteria.", eventType: 'error' };

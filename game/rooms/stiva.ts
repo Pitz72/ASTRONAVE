@@ -35,6 +35,8 @@ export const stivaRoom: Room = {
         { regex: "^(esamina|guarda) (tuta|tuta spaziale)$", handler: () => ({ description: "È la tua tuta da lavoro extraveicolare. Pesante, affidabile, con abbastanza ossigeno per sei ore di lavoro." }) },
         { regex: "^(esamina|guarda) (kit|kit di manutenzione|valigetta)$", handler: () => ({ description: "Una valigetta metallica con il logo della Weyland Corp. Contiene gli attrezzi base per le riparazioni d'emergenza." }) },
         { regex: "^(esamina|guarda) (portello|boccaporto|uscita sud)$", handler: () => ({ description: "È il boccaporto esterno. Una spessa lastra di metallo che conduce al vuoto dello spazio." }) },
+        // ANALIZZA
+        { regex: "^(analizza) (casse|minerale|carico)$", handler: () => ({ description: "L'analisi spettrale conferma il contenuto: ferro e nichel di alta purezza. Nessuna anomalia energetica o biologica.", eventType: 'magic' }) },
         // PRENDI
         { regex: "^(prendi) (tuta|tuta spaziale)$", handler: (state) => {
             if (state.inventory.some(item => item.startsWith("Tuta Spaziale"))) {

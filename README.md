@@ -1,6 +1,6 @@
 # IL RELITTO SILENTE
 
-**Versione 0.4.0 - Architettura Modulare**
+**Versione 0.4.5 - Rifinitura Parser e Interazioni**
 
 Un'avventura testuale (interactive fiction) di fantascienza con parser di comandi, ispirata ai classici giochi a riga di comando dei primi anni '80. L'intera esperienza è progettata per emulare l'estetica di un monitor a fosfori verdi di un vecchio terminale.
 
@@ -23,7 +23,7 @@ L'avventura si dipana in più atti. **Atto I:** dovrai trovare un modo per entra
 - **Esperienza Narrativa Curata**: Dimentica la casualità delle AI. Ogni testo, enigma e interazione è stato scritto a mano per garantire un'esperienza coerente e avvincente. La storia si svela su più livelli: attraverso l'ambiente, i log alieni da decifrare e le rivelazioni che collegano tutti gli indizi.
 - **Esplorazione Narrativa ed Emotiva**: Il gioco non si basa solo su enigmi, ma anche sulla scoperta di una storia tragica e profonda. Molte aree sono progettate per evocare emozioni e approfondire la lore attraverso l'ambiente stesso.
 - **Onboarding Guidato**: Un menu di avvio minimalista e d'impatto introduce il giocatore all'atmosfera del gioco. Una schermata di istruzioni dedicata, accessibile dal menu, spiega in dettaglio i comandi di base e la meccanica di gioco unica (`ESAMINA` vs `ANALIZZA`), garantendo un'esperienza di onboarding fluida.
-- **Parser di Comandi Migliorato**: Interagisci con il mondo usando comandi in linguaggio naturale (in italiano). Il parser gestisce comandi in modo intelligente, ignorando maiuscole/minuscole, articoli (il, la, un, ecc.) e accenti per un'esperienza più fluida.
+- **Parser di Comandi Flessibile e Intelligente**: Interagisci con il mondo usando comandi in linguaggio naturale (in italiano). Il parser gestisce in modo intelligente sinonimi (`guarda`/`esamina`), preposizioni (`su`/`con`), comandi incompleti o illogici, e ignora maiuscole/minuscole, articoli (il, la, un, ecc.) e accenti per un'esperienza più fluida e tollerante.
 - **Narrazione a Ritmo Controllato**: I testi più lunghi vengono presentati in segmenti, attendendo l'input del giocatore per continuare. Questo migliora la leggibilità e permette di assorbire la storia al proprio ritmo.
 - **Meccanica di Traduzione**: Trova frammenti di dati alieni e usa il tuo scanner per costruire una matrice di traduzione, svelando lentamente la storia e lo scopo del relitto.
 - **Enigmi Logici e basati sulla Conoscenza**: Risolvi enigmi ambientali e a più fasi usando l'osservazione, gli oggetti a tua disposizione e la conoscenza che hai acquisito esplorando e decifrando la storia del relitto. Alcuni enigmi richiedono di collegare indizi e oggetti trovati in stanze diverse, o di usare i tuoi strumenti in modi creativi e inaspettati.

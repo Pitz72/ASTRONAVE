@@ -8,20 +8,23 @@ const getHelpText = (): string => {
 - ANALIZZA [oggetto]
 - VAI [direzione]
 - PRENDI [oggetto]
-- USA [oggetto] SU [bersaglio]
+- USA [oggetto] SU/CON [bersaglio]
 - INDOSSA [oggetto]
 - APRI [oggetto]
+- TOCCA [oggetto]
 - INVENTARIO / I
 - SALVA / CARICA
 - PULISCI / CLEAR (pulisce lo schermo)`;
 };
 
-const normalizeCommand = (command: string): string => {
+// FIX: Export normalizeCommand to be used in other files.
+export const normalizeCommand = (command: string): string => {
     return command
         .toLowerCase()
         .trim()
         .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Rimuove accenti
         .replace(/\b(il|lo|la|i|gli|le|un|uno|una|un'|l')\s+/g, '') // Rimuove articoli
+        .replace(/\b(con|sopra)\b/g, 'su') // Normalizza preposizioni
         .replace(/\s+/g, ' '); // Collassa spazi multipli
 };
 
@@ -84,7 +87,7 @@ export const processCommand = (command: string, currentState: PlayerState): { re
             if (description.includes(pauseMarker)) {
                 const parts = description.split(pauseMarker);
                 description = parts[0];
-                continueText = parts[1];
+                continueText = parts.slice(1).join(pauseMarker);
             }
             
             response = {
@@ -100,6 +103,45 @@ export const processCommand = (command: string, currentState: PlayerState): { re
             }
             return { response, newState };
         }
+    }
+    
+    // Generic fallbacks if no specific command was matched
+    const specificNonsenseMatch = normalizedCommand.match(/^(usa) (taglierina|taglierina al plasma) su (batteria|batteria di emergenza)$/);
+    if (specificNonsenseMatch) {
+        if (newState.inventory.includes("Taglierina al Plasma") && newState.inventory.includes("Batteria di Emergenza")) {
+             response = { description: `Sarebbe un'idea terribilmente stupida. Potresti causare un'esplosione.`, eventType: 'error' };
+             return { response, newState };
+        }
+    }
+
+    const genericMatchUsa = normalizedCommand.match(/^(usa) (.+) su (.+)$/);
+    if (genericMatchUsa) {
+        const item = genericMatchUsa[2].trim();
+        const hasItem = newState.inventory.some(invItem => normalizeCommand(invItem).includes(item));
+        if (hasItem) {
+            response = { description: `Usare ${item} su ${genericMatchUsa[3]} non sembra avere alcun effetto.`, eventType: 'error' };
+            return { response, newState };
+        } else {
+            response = { description: `Non hai '${item}'.`, eventType: 'error' };
+            return { response, newState };
+        }
+    }
+
+    const genericMatchUsaSingle = normalizedCommand.match(/^(usa|attiva|apri|indossa|leggi|tocca) (.+)$/);
+    if (genericMatchUsaSingle) {
+        const item = genericMatchUsaSingle[2].trim();
+        const action = genericMatchUsaSingle[1].trim();
+        const hasItem = newState.inventory.some(invItem => normalizeCommand(invItem).includes(item));
+        if (hasItem) {
+            response = { description: `Cosa vuoi ${action} con '${item}'? Devi essere più specifico (es. USA ${item.toUpperCase()} SU ...).`, eventType: 'error' };
+            return { response, newState };
+        }
+    }
+
+    const genericMatchAnalizza = normalizedCommand.match(/^(analizza) (.+)$/);
+    if (genericMatchAnalizza) {
+        response = { description: `Analizzi ${genericMatchAnalizza[2]}, ma non c'è nulla di anormale o interessante da segnalare.`, eventType: null };
+        return { response, newState };
     }
     
     return { response, newState };

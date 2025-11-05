@@ -181,6 +181,7 @@ export const corridoioPrincipaleRoom: Room = {
              return { description: `Provi a usare ${match[2]} sulla porta, ma non sembra avere alcun effetto.`, eventType: 'error' };
         }},
         { regex: "^(apri|usa|tocca) (porta ovest)$", handler: () => ({ description: "Appoggi la mano sul complesso simbolo a stella. A differenza delle altre, questa porta non reagisce. Rimane fredda, inerte e sigillata. I tre incavi alla base suggeriscono che serva qualcos'altro.", eventType: 'error' })},
+        { regex: "^(tocca) (pareti|muro|soffitto|pavimento)$", handler: () => ({ description: "La superficie è liscia e stranamente tiepida, quasi come pelle. Senti una debolissima, quasi impercettibile vibrazione, come un respiro lentissimo." }) },
         activateCrystalCommand,
         analyzeMemoryCoreCommand,
     ]

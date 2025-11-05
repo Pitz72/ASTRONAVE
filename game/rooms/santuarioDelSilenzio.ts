@@ -1,5 +1,6 @@
 import { Room } from '../../types';
 import { gameData } from '../gameData';
+import { normalizeCommand } from '../gameLogic';
 
 export const santuarioDelSilenzioRoom: Room = {
     description: (state) => "SANTUARIO DEL SILENZIO\n\nLa porta a nord si apre su un ambiente completamente diverso. La debole luce blu qui è sostituita da una fredda luminescenza bianca che emana da motivi geometrici sul pavimento. Sei in una sala circolare dal soffitto a volta altissimo, che si perde nell'oscurità. L'aria è immobile e ha un odore neutro, quasi sterile, come di pietra antica.\nLe pareti sono interamente coperte da intricati bassorilievi che raffigurano scene di una civiltà aliena. Al centro esatto della sala, si erge un altare cilindrico di pietra nera levigata.\nOltre all'uscita a SUD da cui sei entrato, c'è un altro passaggio a OVEST.",
@@ -14,7 +15,7 @@ export const santuarioDelSilenzioRoom: Room = {
         }},
         { regex: "^(esamina|guarda) (bassorilievi|muri|pareti|incisioni)$", handler: () => ({ description: "Sono scene incredibilmente dettagliate. Vedi creature alte e sottili che osservano un cielo con tre soli. Le vedi piantare semi luminosi su un pianeta fertile. Le vedi costruire navi immense, identiche a questa, che partono verso le stelle. L'ultima scena raffigura le creature che entrano nelle navi, con un'espressione non di paura, ma di solenne determinazione. È la storia di un esodo, di un sacrificio." }) },
         { regex: "^(esamina|guarda) (altare|pietra|centro)$", handler: (state) => {
-             if (state.inventory.includes("Stele del Ricordo")) {
+             if (state.inventory.includes("Stele del Ricordo") || state.flags.stelePresa) {
                 return { description: "È un blocco cilindrico di una pietra nera che assorbe la luce. Lo scomparto da cui hai preso la Stele è ora aperto e vuoto." };
             }
             return { description: "È un blocco cilindrico di una pietra nera che assorbe la luce. La superficie superiore è perfettamente liscia, tranne per un incavo circolare, profondo pochi centimetri. Sembra fatto per alloggiare un oggetto specifico. Sembra che manchi qualcosa." };
@@ -43,14 +44,22 @@ export const santuarioDelSilenzioRoom: Room = {
             if (!state.inventory.includes("Disco di Pietra")) {
                 return { description: "Non hai un disco da usare.", eventType: 'error' };
             }
-            if (state.inventory.includes("Stele del Ricordo")) {
+            if (state.inventory.includes("Stele del Ricordo") || state.flags.stelePresa) {
                  return { description: "L'hai già fatto.", eventType: 'error' };
             }
             const discoIndex = state.inventory.indexOf("Disco di Pietra");
             state.inventory.splice(discoIndex, 1);
             state.inventory.push("Stele del Ricordo");
+            state.flags.stelePresa = true;
             return { description: "Appoggi il pesante disco di pietra nell'incavo dell'altare. Calza a pennello. Per un istante non succede nulla, poi senti un profondo 'clunk' provenire dall'interno della pietra. Una sezione dell'altare si ritrae silenziosamente, rivelando uno scomparto segreto. All'interno, adagiata su un cuscino di luce solidificata, c'è una tavoletta rettangolare coperta di simboli complessi: la Stele del Ricordo.", eventType: 'magic' };
         }},
-        { regex: "^(usa) (.+) su (altare)$", handler: (state, match) => ({ description: `Provi a inserire ${match[2]} nell'incavo, ma non si adatta o non ha il peso giusto. Il meccanismo non reagisce.` })},
+        { regex: "^(usa) (.+) su (altare|incavo)$", handler: (state, match) => {
+            const item = match[2].trim();
+            const hasItem = state.inventory.some(invItem => normalizeCommand(invItem).includes(item));
+            if (!hasItem) {
+                return { description: `Non hai '${item}'.`, eventType: 'error' };
+            }
+            return { description: `Provi a usare ${item} sull'incavo, ma non si adatta o non ha il peso giusto. Il meccanismo non reagisce.` };
+        }},
     ]
 };

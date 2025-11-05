@@ -21,8 +21,8 @@ export const scriptoriumRoom: Room = {
             return { description: gameData["Arca della Memoria"].description(state), eventType: 'movement' };
         }},
         // ESAMINA
-        { regex: "^(esamina|guarda) (proiettori|nicchie|testo|ologrammi)$", handler: () => ({ description: "Sono archivi di dati olografici. Il testo è un flusso costante di simboli alieni che cambiano e si ricombinano. Senza una chiave di lettura, sono solo bellissime e incomprensibili opere d'arte digitale." }) },
-        { regex: "^(esamina|guarda) (proiettore spento|proiettore rotto|nicchia buia)$", handler: (state) => {
+        { regex: "^(esamina|guarda) (proiettori|nicchie|testo|ologrammi|globi|globi di testo)$", handler: () => ({ description: "Sono archivi di dati olografici. Il testo è un flusso costante di simboli alieni che cambiano e si ricombinano. Senza una chiave di lettura, sono solo bellissime e incomprensibili opere d'arte digitale." }) },
+        { regex: "^(esamina|guarda) (proiettore|proiettore spento|proiettore rotto|nicchia buia)$", handler: (state) => {
              if (state.flags.discoPreso) {
                 return { description: "È il proiettore da cui hai rimosso il disco. Ora è completamente inerte, il suo meccanismo interno esposto e danneggiato." };
             }
@@ -36,7 +36,7 @@ export const scriptoriumRoom: Room = {
             return { description: "Non vedi nessun disco.", eventType: 'error' };
         }},
         // ANALIZZA
-        { regex: "^(analizza) (proiettori|nicchie)$", handler: () => ({ description: "Lo scanner rileva un'enorme densità di dati compressi all'interno dei campi olografici. Stai guardando l'equivalente di intere biblioteche, ma la tecnologia di codifica è al di là della tua comprensione.", eventType: 'magic' }) },
+        { regex: "^(analizza) (proiettori|nicchie|testo|ologrammi|globi|globi di testo)$", handler: () => ({ description: "Lo scanner rileva un'enorme densità di dati compressi all'interno dei campi olografici. Stai guardando l'equivalente di intere biblioteche, ma la tecnologia di codifica è al di là della tua comprensione.", eventType: 'magic' }) },
         { regex: "^(analizza) (disco|disco di pietra)$", handler: (state) => {
             if (state.flags.spottedDisco || state.inventory.includes("Disco di Pietra")) {
                 return { description: "L'analisi conferma che il disco ha una massa e una densità specifiche, molto elevate. La sua forma circolare e le sue proprietà corrispondono esattamente ai requisiti del meccanismo che hai rilevato nell'altare del Santuario. Questa è la chiave.", eventType: 'magic' };
@@ -55,5 +55,7 @@ export const scriptoriumRoom: Room = {
             state.flags.discoPreso = true;
             return { description: "Con un po' di fatica, smuovi il disco e lo estrai dal meccanismo del proiettore. È più pesante di quanto sembri. Ora hai il Disco di Pietra.", eventType: 'item_pickup' };
         }},
+        // LEGGI
+        { regex: "^(leggi) (.+)$", handler: () => ({ description: "Il testo alieno è incomprensibile a occhio nudo. Hai bisogno del tuo scanner per analizzare e tentare di tradurre qualsiasi dato tu possa trovare.", eventType: 'error' })},
     ]
 };
