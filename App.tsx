@@ -14,7 +14,6 @@ import {
   playKeystrokeSound
 } from './services/audioService';
 
-const SAVE_KEY = 'silentWreckSave';
 const PAUSE_MARKER = "[PAUSE]";
 
 const INITIAL_PLAYER_STATE: PlayerState = {
@@ -262,34 +261,58 @@ const App: React.FC = () => {
 
   const saveGame = () => {
     try {
-      localStorage.setItem(SAVE_KEY, JSON.stringify(playerState));
-      setOutput(prev => [...prev, '> GIOCO SALVATO.']);
+      const dataStr = JSON.stringify(playerState, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'relitto-silente-salvataggio.json';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      setOutput(prev => [...prev, '> FILE DI SALVATAGGIO SCARICATO.']);
     } catch (error) {
       console.error("Failed to save game:", error);
-      setOutput(prev => [...prev, '> ERRORE: Impossibile salvare la partita.']);
+      setOutput(prev => [...prev, '> ERRORE: Impossibile creare il file di salvataggio.']);
       playErrorSound();
     }
   };
 
   const loadGame = () => {
-    try {
-      const savedData = localStorage.getItem(SAVE_KEY);
-      if (savedData) {
-        const loadedState = JSON.parse(savedData);
-        setPlayerState(loadedState);
-        const { response } = processCommand('guarda', loadedState);
-        setGameState(GameState.Playing);
-        setOutput(['> GIOCO CARICATO.']);
-        handleGameResponse({ ...response, clearScreen: true });
-      } else {
-        setOutput(prev => [...prev, '> NESSUN SALVATAGGIO TROVATO.']);
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json,application/json';
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) {
+        return;
       }
-    } catch (error)
-    {
-      console.error("Failed to load game:", error);
-      setOutput(prev => [...prev, '> ERRORE: Il file di salvataggio è corrotto.']);
-      playErrorSound();
-    }
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const fileContent = event.target?.result as string;
+          if (fileContent) {
+            const loadedState = JSON.parse(fileContent);
+            if (loadedState.location && loadedState.inventory && loadedState.flags) {
+                setPlayerState(loadedState);
+                const { response } = processCommand('guarda', loadedState);
+                setGameState(GameState.Playing);
+                setOutput(['> GIOCO CARICATO.']);
+                handleGameResponse({ ...response, clearScreen: true });
+            } else {
+                 throw new Error("Invalid save file structure.");
+            }
+          }
+        } catch (error) {
+          console.error("Failed to load game:", error);
+          setOutput(prev => [...prev, '> ERRORE: Il file di salvataggio è corrotto o non valido.']);
+          playErrorSound();
+        }
+      };
+      reader.readAsText(file);
+    };
+    input.click();
   };
 
   const submitCommand = useCallback(async (command: string) => {

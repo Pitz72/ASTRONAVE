@@ -1,6 +1,6 @@
 # IL RELITTO SILENTE
 
-**Versione 0.3.0 - Design Completo**
+**Versione 0.3.1 - Portabilità dei Salvataggi**
 
 Un'avventura testuale (interactive fiction) di fantascienza con parser di comandi, ispirata ai classici giochi a riga di comando dei primi anni '80. L'intera esperienza è progettata per emulare l'estetica di un monitor a fosfori verdi di un vecchio terminale.
 
@@ -28,7 +28,7 @@ L'avventura si dipana in più atti. **Atto I:** dovrai trovare un modo per entra
 - **Enigmi Logici e basati sulla Conoscenza**: Risolvi enigmi ambientali e a più fasi usando l'osservazione, gli oggetti a tua disposizione e la conoscenza che hai acquisito esplorando e decifrando la storia del relitto. Alcuni enigmi richiedono di collegare indizi e oggetti trovati in stanze diverse, o di usare i tuoi strumenti in modi creativi e inaspettati.
 - **Esplorazione Non Lineare**: Avanza nell'avventura scegliendo il tuo percorso all'interno dell'enigmatico relitto alieno.
 - **Effetti Sonori 8-bit**: Suoni generati proceduralmente per tasti, azioni ed eventi, per aumentare l'immersione.
-- **Salvataggio e Caricamento**: Possibilità di salvare e caricare la partita in qualsiasi momento.
+- **Salvataggio e Caricamento basato su File**: Possibilità di salvare la partita scaricando un file `.json` e di caricarla in qualsiasi momento, garantendo la portabilità dei salvataggi.
 
 ## Come Giocare
 
@@ -44,8 +44,8 @@ Apri l'applicazione e usa il menu per leggere le istruzioni o iniziare a giocare
 - `usa la batteria sul pannello`: Per interagire con enigmi ambientali.
 - `inventario` / `i`: Per controllare gli oggetti che possiedi.
 - `aiuto`: Per visualizzare un elenco dei comandi principali.
-- `salva`: Per salvare lo stato attuale del gioco.
-- `carica`: Per caricare l'ultima partita salvata.
+- `salva`: Per scaricare un file di salvataggio (`.json`) sul tuo computer.
+- `carica`: Per caricare una partita da un file di salvataggio (`.json`) precedentemente scaricato.
 
 ## Tecnologie Utilizzate
 
